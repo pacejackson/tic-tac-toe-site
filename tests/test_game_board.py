@@ -1,8 +1,8 @@
 __author__ = 'andrewpboyle'
 
 import unittest
-from game.player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.board import new_board, make_move, to_char_array, from_char_array
+from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
+from game.game_board import new_board, make_move, to_char_array, from_char_array
 
 
 class TestBoard(unittest.TestCase):

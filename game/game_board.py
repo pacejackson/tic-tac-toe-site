@@ -1,7 +1,7 @@
 __author__ = 'andrewpboyle'
 import copy
 from itertools import chain
-from game.player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char
+from game.game_player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char
 
 
 def _get_index(x, y):
@@ -61,7 +61,7 @@ def _check_point(current_board, x, y):
 def make_move(current_board, x, y, p):
     """
     Checks to see that the move is valid.  If it is, it returns a board representing
-    the new board state.  If p is not a valid value for a player, it will raise an
+    the new board state.  If p is not a valid value for a game_player, it will raise an
     exception.  If the resulting board is invalid (say you have 3 X moves and 1 O
     move) it will also throw an exception.  See _check_point for any other exceptions
     the function may throw.
@@ -69,7 +69,7 @@ def make_move(current_board, x, y, p):
     current_board - the board state you want to check.
     x - the column where your point is in 2D.  0 <= x <= 2
     y - the row where your point is in 2D.  0 <= y <= 2
-    p - the player making the move. p=1 or p=-1
+    p - the game_player making the move. p=1 or p=-1
     """
     _check_point(current_board, x, y)
     index = _get_index(x, y)
@@ -78,8 +78,8 @@ def make_move(current_board, x, y, p):
     result = copy.deepcopy(current_board)
     result[index] = p
     if not is_valid(result):
-        player_name = get_player_char(p)
-        raise Exception('Move for {0} at ({1}, {2}) is invalid.'.format(player_name, x, y))
+        game_player_name = get_player_char(p)
+        raise Exception('Move for {0} at ({1}, {2}) is invalid.'.format(game_player_name, x, y))
     return result
 
 
@@ -98,7 +98,7 @@ def to_char_array(current_board):
     """
     Returns a 2D char array representing the board. PLAYER_X's moves are represented
     by 'X', PLAYER_O's moves are represented by 'O', and empty spaces are represented
-    by ' '.  See player.get_player_char for errors this function may raise.
+    by ' '.  See game_player.get_game_player_char for errors this function may raise.
 
     current_board - the board state you want to evaluate.
     """
@@ -108,9 +108,9 @@ def to_char_array(current_board):
 def from_char_array(char_array_board):
     """
     Returns a 1D board array based on the provided 2D char_array_board.  See
-    player.get_player_from_char for errors this function may raise.
+    game_player.get_game_player_from_char for errors this function may raise.
 
     char_array_board - a 2D char array representing the board.  It should be
     formatted like a result from to_char_array
     """
-    return [get_player_from_char(player_char) for player_char in chain(*char_array_board)]
+    return [get_player_from_char(game_player_char) for game_player_char in chain(*char_array_board)]
