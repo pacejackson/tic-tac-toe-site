@@ -41,24 +41,24 @@ def _check_point_element(elem, elem_name):
         raise IndexError('Input {0} must be between 0 and 2'.format(elem_name))
 
 
-def _check_point(current_board, x, y):
+def _check_point(board, x, y):
     """
     Checks that each point element is correct, then checks that the point is
     an available space.  Throws an Exception if the point is already occupied.
     See _check_point_element for other exceptions the function may throw.
 
-    current_board - the board state you want to check.
+    board - the board state you want to check.
     x - the column where your point is in 2D.
     y - the row where your point is in 2D.
     """
     _check_point_element(x, 'x')
     _check_point_element(y, 'y')
     index = _get_index(x, y)
-    if current_board[index] != 0:
+    if board[index] != 0:
         raise Exception('Board at point ({0}, {1}) is already occupied.'.format(x, y))
 
 
-def make_move(current_board, x, y, p):
+def make_move(board, x, y, p):
     """
     Checks to see that the move is valid.  If it is, it returns a board representing
     the new board state.  If p is not a valid value for a game_player, it will raise an
@@ -66,16 +66,16 @@ def make_move(current_board, x, y, p):
     move) it will also throw an exception.  See _check_point for any other exceptions
     the function may throw.
 
-    current_board - the board state you want to check.
+    board - the board state you want to check.
     x - the column where your point is in 2D.  0 <= x <= 2
     y - the row where your point is in 2D.  0 <= y <= 2
     p - the game_player making the move. p=1 or p=-1
     """
-    _check_point(current_board, x, y)
+    _check_point(board, x, y)
     index = _get_index(x, y)
     if not is_valid_player(p) or p == NO_PLAYER:
         raise Exception('Input p must = PLAYER_X or PLAYER_O.  p = {0}'.format(p))
-    result = copy.deepcopy(current_board)
+    result = copy.deepcopy(board)
     result[index] = p
     if not is_valid(result):
         game_player_name = get_player_char(p)
@@ -83,27 +83,28 @@ def make_move(current_board, x, y, p):
     return result
 
 
-def is_valid(current_board):
+def is_valid(board):
     """
     Returns True if the board is valid.  The board is considered valid if the sum of
     all values in the board, sum, is such that -1 <= sum <= 1.
 
-    current_board - the board state you want to check.
+    board - the board state you want to check.
     """
-    board_sum = sum(current_board)
+    board_sum = sum(board)
     return -1 <= board_sum <= 1
 
 
-def to_char_array(current_board):
+def to_char_array(board):
     """
     Returns a 2D char array representing the board. PLAYER_X's moves are represented
     by 'X', PLAYER_O's moves are represented by 'O', and empty spaces are represented
     by ' '.  See game_player.get_game_player_char for errors this function may raise.
 
-    current_board - the board state you want to evaluate.
+    board - the board state you want to evaluate.
     """
-    char_array = [get_player_char(p) for p in current_board]
+    char_array = [get_player_char(p) for p in board]
     return [char_array[0:3], char_array[3:6], char_array[6:]]
+
 
 def from_char_array(char_array_board):
     """
@@ -114,3 +115,18 @@ def from_char_array(char_array_board):
     formatted like a result from to_char_array
     """
     return [get_player_from_char(game_player_char) for game_player_char in chain(*char_array_board)]
+
+
+def rotate_board(board, num_rotations):
+    #We'll accept any number of rotations, but mod them by 4 since they are
+    #equivalent
+    num_rotations %= 4
+    result = copy.deepcopy(board)
+    for i in range(num_rotations):
+        result[2], result[0] = result[0], result[2]
+        result[8], result[2] = result[2], result[8]
+        result[6], result[8] = result[8], result[6]
+        result[1], result[3] = result[3], result[1]
+        result[1], result[5] = result[5], result[1]
+        result[5], result[7] = result[7], result[5]
+    return result
