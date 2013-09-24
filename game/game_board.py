@@ -217,5 +217,9 @@ def rotate_point(x, y, num_rotations):
         r_y = temp
     return r_x, r_y
 
+
 def is_empty(board):
+    """
+    Returns True if the board is empty. i.e. in is equal to a new_board()
+    """
     return board == new_board()

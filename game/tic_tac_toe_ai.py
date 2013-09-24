@@ -105,6 +105,8 @@ def evaluate_line(board, player, x1, y1, x2, y2, x3, y3):
     You can see more details at the sites where I researched this
     algorithm.
 
+    ___TODO___: see if you can find a better heuristic for this.
+
     board - the tic-tac-toe board you want to evaluate.
     player - the max player you are scoring the line for
     x1, y1, x2, y2, x3, y3 - 2D points defining the line you want to
