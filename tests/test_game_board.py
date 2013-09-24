@@ -2,7 +2,8 @@ __author__ = 'andrewpboyle'
 
 import unittest
 from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.game_board import new_board, make_move, to_char_array, from_char_array, has_won, get_all_moves, rotate_board
+from game.game_board import new_board, make_move, to_char_array, \
+    from_char_array, has_won, get_all_moves, rotate_board, rotate_point
 
 
 class TestBoard(unittest.TestCase):
@@ -238,6 +239,21 @@ class TestBoard(unittest.TestCase):
         ]
         expected = from_char_array(expected_char_array)
         self.assertEquals(rotate_board(board, 1), expected)
+
+    def test_rotate_point(self):
+        point_to_expected = {
+            (0, 0): (2, 0),
+            (1, 0): (2, 1),
+            (2, 0): (2, 2),
+            (0, 1): (1, 0),
+            (1, 1): (1, 1),
+            (2, 1): (1, 2),
+            (0, 2): (0, 0),
+            (1, 2): (0, 1),
+            (2, 2): (0, 2),
+        }
+        for p in point_to_expected.keys():
+            self.assertEquals(rotate_point(p[0], p[1], 1), point_to_expected[p])
 
 
 if __name__ == '__main__':

@@ -212,7 +212,10 @@ def rotate_point(x, y, num_rotations):
     r_y = y
     num_rotations %= 4
     for i in range(num_rotations):
-        temp = r_y
+        temp = r_x
         r_x = 2 - r_y
         r_y = temp
     return r_x, r_y
+
+def is_empty(board):
+    return board == new_board()

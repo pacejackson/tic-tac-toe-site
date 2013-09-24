@@ -1,5 +1,5 @@
 __author__ = 'andrewpboyle'
-from game_board import get_all_moves, make_move, get_state_at_point
+from game_board import get_all_moves, make_move, get_state_at_point, is_empty
 from game_player import get_opponent
 from collections import namedtuple
 import config
@@ -19,6 +19,9 @@ def get_move(board, player):
     current tic-tac-toe board.
     player - the (int) value of the player looking to get the best move possible.
     """
+    #optimization to always pick the top-left corner on an empty board
+    if is_empty(board):
+        return 0, 0
     result = minimax(board, player, 2, NEG_INF, INF)
     return result.x, result.y
 
@@ -47,23 +50,25 @@ def minimax(board, player, depth, alpha, beta):
     best_x = -1
     best_y = -1
     moves = get_all_moves(board, player)
+    opponent = get_opponent(player)
     if moves == [] or depth == 0:
-        score = evaluate(board, player)
+        score = evaluate(board, config.computer)
         return minimax_result(score=score, x=best_x, y=best_y)
     else:
         for move in moves:
+            new_board = make_move(board, move[0], move[1], player)
             if player == config.computer:
-                result = minimax(make_move(board, move[0], move[1]), depth - 1, get_opponent(player), alpha, beta)
+                result = minimax(new_board, opponent, depth - 1, alpha, beta)
                 if result.score > alpha:
-                    best_x = result.x
-                    best_y = result.y
                     alpha = result.score
+                    best_x = move[0]
+                    best_y = move[1]
             else:
-                result = minimax(make_move(board, move[0], move[1]), depth - 1, get_opponent(player), alpha, beta)
+                result = minimax(new_board, opponent, depth - 1, alpha, beta)
                 if result.score < beta:
                     beta = result.score
-                    best_x = result.x
-                    best_y = result.y
+                    best_x = move[0]
+                    best_y = move[1]
             if alpha >= beta:
                 break
     best_score = alpha if player == config.computer else beta
@@ -121,12 +126,12 @@ def evaluate_line(board, player, x1, y1, x2, y2, x3, y3):
         elif score == -1:
             return 0
         else:
-            score = -1
+            score = 1
     elif state_2 == opponent:
-        if score == 1:
-            return 0
-        elif score == -1:
+        if score == -1:
             score = -10
+        elif score == 1:
+            return 0
         else:
             score = -1
 
@@ -141,7 +146,7 @@ def evaluate_line(board, player, x1, y1, x2, y2, x3, y3):
     elif state_3 == opponent:
         if score < 0:
             score *= 10
-        elif score > 0:
+        elif score > 1:
             return 0
         else:
             score = -1
