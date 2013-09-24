@@ -178,3 +178,17 @@ def has_won(board, player):
         if pattern & check == pattern:
             return True
     return False
+
+
+def get_state_at_point(board, x, y):
+    """
+    Returns the state of the board at the supplied x, y.  See _check_point
+    for errors this function may raise.  Will return either PLAYER_X,
+    PLAYER_O, or NO_PLAYER
+
+    board - the board state you want to evaluate
+    x - the column where your point is in 2D.  0 <= x <= 2
+    y - the row where your point is in 2D.  0 <= y <= 2
+    """
+    _check_point(board, x, y)
+    return board[_get_index(x, y)]

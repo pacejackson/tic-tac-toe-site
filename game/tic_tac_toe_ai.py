@@ -1,5 +1,5 @@
 __author__ = 'andrewpboyle'
-from game_board import get_all_moves, make_move
+from game_board import get_all_moves, make_move, get_state_at_point
 from game_player import get_opponent
 from collections import namedtuple
 import config
@@ -19,7 +19,7 @@ def get_move(board, player):
     current tic-tac-toe board.
     player - the (int) value of the player looking to get the best move possible.
     """
-    result = _minimax(board, 2, player, INF, NEG_INF)
+    result = _minimax(board, 2, player, NEG_INF, INF)
     return result.x, result.y
 
 
@@ -58,4 +58,64 @@ def _minimax(board, depth, player, alpha, beta):
 
 
 def _evaluate(board, player):
-    pass
+    """
+    Evaluates the given board, returning the score for the provided player.
+    """
+    score = 0
+    #evaluate cols
+    score += _evaluate_line(board, player, 0, 0, 0, 1, 0, 2)
+    score += _evaluate_line(board, player, 1, 0, 1, 1, 1, 2)
+    score += _evaluate_line(board, player, 2, 0, 2, 1, 2, 2)
+    #evaluate rows
+    score += _evaluate_line(board, player, 0, 0, 1, 0, 2, 0)
+    score += _evaluate_line(board, player, 0, 1, 1, 1, 2, 1)
+    score += _evaluate_line(board, player, 0, 2, 1, 2, 2, 2)
+    #evaluate diags
+    score += _evaluate_line(board, player, 0, 0, 1, 1, 2, 2)
+    score += _evaluate_line(board, player, 2, 0, 1, 1, 0, 2)
+    return score
+
+
+def _evaluate_line(board, player, x1, y1, x2, y2, x3, y3):
+    score = 0
+    opponent = get_opponent(player)
+
+    state_1 = get_state_at_point(board, x1, y1)
+    if state_1 == player:
+        score = 1
+    elif state_1 == opponent:
+        score = -1
+
+    state_2 = get_state_at_point(board, x2, y2)
+    if state_2 == player:
+        if score == 1:
+            score = 10
+        elif score == -1:
+            return 0
+        else:
+            score = -1
+    elif state_2 == opponent:
+        if score == 1:
+            return 0
+        elif score == -1:
+            score = -10
+        else:
+            score = -1
+
+    state_3 = get_state_at_point(board, x3, y3)
+    if state_3 == player:
+        if score > 0:
+            score *= 10
+        elif score < 0:
+            return 0
+        else:
+            score = 1
+    elif state_3 == opponent:
+        if score < 0:
+            score *= 10
+        elif score > 0:
+            return 0
+        else:
+            score = -1
+
+    return score
