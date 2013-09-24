@@ -1,0 +1,17 @@
+.play_canvas {
+    margin: 0 auto;
+    border: 2px solid black;
+    height: 100px;
+    width: 100px;
+}
+
+.game_board {
+    background-color: transparent;
+    height: 400px;
+    width: 400px;
+    margin: 0 auto;
+}
+
+.moused_over {
+    border-color: lightskyblue;
+}
