@@ -2,7 +2,7 @@ __author__ = 'andrewpboyle'
 
 import unittest
 from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.game_board import new_board, make_move, to_char_array, from_char_array
+from game.game_board import new_board, make_move, to_char_array, from_char_array, has_won, get_all_moves
 
 
 class TestBoard(unittest.TestCase):
@@ -127,5 +127,100 @@ class TestBoard(unittest.TestCase):
             PLAYER_X, PLAYER_X, PLAYER_O
         ]
         self.assertEquals(from_char_array(char_array), expected)
+
+    def test_has_won(self):
+        char_array = [
+            ['X', 'O', ' '],
+            ['O', 'O', 'X'],
+            ['X', 'X', 'O']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+
+        #test cols
+
+        char_array = [
+            ['X', 'O', ' '],
+            ['O', 'O', 'X'],
+            ['X', 'O', 'X']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        char_array = [
+            ['O', 'X', ' '],
+            ['O', 'O', 'X'],
+            ['O', 'X', 'X']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        char_array = [
+            ['X', ' ', 'O'],
+            ['O', 'X', 'O'],
+            ['X', 'X', 'O']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+
+        #test diags
+
+        char_array = [
+            ['O', 'X', ' '],
+            ['O', 'O', 'X'],
+            ['X', 'X', 'O']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        char_array = [
+            ['X', 'X', 'O'],
+            ['O', 'O', 'X'],
+            ['O', 'X', ' ']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+
+        #test rows
+
+        char_array = [
+            ['X', 'O', 'X'],
+            ['O', 'O', 'O'],
+            ['X', ' ', 'X']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        char_array = [
+            ['O', 'O', 'O'],
+            ['X', 'O', 'X'],
+            ['X', ' ', 'X']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        char_array = [
+            ['X', 'O', 'X'],
+            ['X', ' ', 'X'],
+            ['O', 'O', 'O']
+        ]
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+
+    def test_get_all_moves(self):
+        char_array = [
+            ['X', ' ', ' '],
+            [' ', 'O', ' '],
+            [' ', ' ', ' ']
+        ]
+        expected_moves = [
+            (1, 0), (2, 0), (0, 1), (2, 1),
+            (0, 2), (1, 2), (2, 2)
+        ]
+        moves = get_all_moves(from_char_array(char_array), PLAYER_X)
+        for move in expected_moves:
+            self.assertIn(move, moves)
+        char_array = [
+            ['X', 'O', 'X'],
+            [' ', 'O', 'X'],
+            [' ', 'O', ' ']
+        ]
+        expected_moves = []
+        moves = get_all_moves(from_char_array(char_array), PLAYER_X)
+        self.assertEquals(moves, expected_moves)
 if __name__ == '__main__':
     unittest.main()

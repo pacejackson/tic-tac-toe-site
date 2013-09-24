@@ -1,5 +1,6 @@
 __author__ = 'andrewpboyle'
 
+
 PLAYER_X = 1
 PLAYER_O = -1
 NO_PLAYER = 0
@@ -48,3 +49,14 @@ def get_player_from_char(player_char):
     if player_char not in PLAYER_MAP.keys():
         raise Exception('{0} is not a valid player char.'.format(player_char))
     return PLAYER_MAP[player_char]
+
+
+def get_opponent(player):
+    """
+    Returns the given players opponent if they are a valid player.  A player's
+    opponent = -player.
+
+    player - the player who's opponent you want to get.
+    """
+    if is_valid_player(player):
+        return -player

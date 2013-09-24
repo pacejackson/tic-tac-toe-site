@@ -1,7 +1,12 @@
 __author__ = 'andrewpboyle'
 import copy
 from itertools import chain
-from game.game_player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char
+from game.game_player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char, get_opponent
+
+
+WINNING_PATTERNS = (0b111000000, 0b000111000, 0b000000111,  # rows
+                    0b100100100, 0b010010010, 0b001001001,  # cols
+                    0b100010001, 0b001010100)               # diags
 
 
 def _get_index(x, y):
@@ -118,6 +123,13 @@ def from_char_array(char_array_board):
 
 
 def rotate_board(board, num_rotations):
+    """
+    Returns a new board that is equal to the supplied board rotated num_rotations
+    times.
+
+    board - the 1D board array you want to rotate.
+    num_rotations - the number of rotations you want to do.
+    """
     #We'll accept any number of rotations, but mod them by 4 since they are
     #equivalent
     num_rotations %= 4
@@ -130,3 +142,39 @@ def rotate_board(board, num_rotations):
         result[1], result[5] = result[5], result[1]
         result[5], result[7] = result[7], result[5]
     return result
+
+
+def get_all_moves(board, player):
+    """
+    Returns a list of all moves available to the player in the current board.
+
+    board - the board state you want to evaluate.
+    player - the player you are getting moves for.
+    """
+    moves = []
+    if not (has_won(board, player) or has_won(board, get_opponent(player))):
+        for x in range(3):
+            for y in range(3):
+                index = _get_index(x, y)
+                if board[index] == NO_PLAYER:
+                    moves += [(x, y)]
+    return moves
+
+
+def has_won(board, player):
+    """
+    Returns True if player has won, False if not.
+
+    board - the board state you want to evaluate.
+    player - the player you are checking
+    """
+    check = 0b000000000
+    for x in range(3):
+        for y in range(3):
+            index = _get_index(x, y)
+            if board[index] == player:
+                check |= (1 << index)
+    for pattern in WINNING_PATTERNS:
+        if pattern & check == pattern:
+            return True
+    return False

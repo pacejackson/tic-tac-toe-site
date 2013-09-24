@@ -1,15 +1,14 @@
 __author__ = 'andrewpboyle'
-from game_board import make_move
+from game_board import get_all_moves, make_move
+from game_player import get_opponent
 from collections import namedtuple
 import config
 
 INF = float('inf')
 NEG_INF = float('-inf')
-winning_patterns = (0b111000000, 0b000111000, 0b000000111,  # rows
-                    0b100100100, 0b010010010, 0b001001001,  # cols
-                    0b100010001, 0b001010100)               # diags
 
-minmax_result = namedtuple('minmax_result', ['score', 'x', 'y'])
+
+minimax_result = namedtuple('minimax_result', ['score', 'x', 'y'])
 
 
 def get_move(board, player):
@@ -20,11 +19,11 @@ def get_move(board, player):
     current tic-tac-toe board.
     player - the (int) value of the player looking to get the best move possible.
     """
-    result = _minmax(board, 2, player, INF, NEG_INF)
+    result = _minimax(board, 2, player, INF, NEG_INF)
     return result.x, result.y
 
 
-def _minmax(board, depth, player, alpha, beta):
+def _minimax(board, depth, player, alpha, beta):
     """
     I researched the algorithm for the tic-tac-toe ai here:
     http://www.ntu.edu.sg/home/ehchua/programming/java/JavaGame_TicTacToe_AI.html
@@ -32,4 +31,31 @@ def _minmax(board, depth, player, alpha, beta):
     http://en.wikipedia.org/wiki/Minimax#Minimax_algorithm_with_alternate_moves
     http://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
     """
+    best_x = -1
+    best_y = -1
+    moves = get_all_moves(board, player)
+    if moves == [] or depth == 0:
+        score = _evaluate(board, player)
+        return minimax_result(score=score, x=best_x, y=best_y)
+    else:
+        for move in moves:
+            if player == config.computer:
+                result = _minimax(make_move(board, move[0], move[1]), depth - 1, get_opponent(player), alpha, beta)
+                if result.score > alpha:
+                    best_x = result.x
+                    best_y = result.y
+                    alpha = result.score
+            else:
+                result = _minimax(make_move(board, move[0], move[1]), depth - 1, get_opponent(player), alpha, beta)
+                if result.score < beta:
+                    beta = result.score
+                    best_x = result.x
+                    best_y = result.y
+            if alpha >= beta:
+                break
+    best_score = alpha if player == config.computer else beta
+    return minimax_result(score=best_score, x=best_x, y=best_y)
+
+
+def _evaluate(board, player):
     pass
