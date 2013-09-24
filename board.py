@@ -1,6 +1,6 @@
 __author__ = 'andrewpboyle'
 import copy
-from player import NO_PLAYER, PLAYER_X, PLAYER_Y, is_valid_player, get_player_char
+from player import NO_PLAYER, is_valid_player, get_player_char
 
 
 def result():
