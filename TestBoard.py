@@ -2,7 +2,7 @@ __author__ = 'andrewpboyle'
 
 import unittest
 from game.player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.board import *
+from game.board import new_board, make_move, to_char_array, from_char_array
 
 
 class TestBoard(unittest.TestCase):
@@ -15,14 +15,14 @@ class TestBoard(unittest.TestCase):
     def test_make_move_invalid(self):
         my_board = new_board()
         moves = [
-            (-1, 0, PLAYER_O),
-            ( 0, -1, PLAYER_O),
-            (10, 0, PLAYER_O),
-            ( 0, 10, PLAYER_O),
-            ( 0, 0, 4),
-            ( 0, 0, 'X'),
-            (3, 3, PLAYER_O),
-            (5, 5, PLAYER_O)
+            (my_board, -1, 0, PLAYER_O),
+            (my_board,  0, -1, PLAYER_O),
+            (my_board, 10, 0, PLAYER_O),
+            (my_board,  0, 10, PLAYER_O),
+            (my_board,  0, 0, 4),
+            (my_board,  0, 0, 'X'),
+            (my_board, 3, 3, PLAYER_O),
+            (my_board, 5, 5, PLAYER_O)
         ]
         for move in moves:
             self.assertRaises(Exception, make_move, move)
@@ -115,5 +115,17 @@ class TestBoard(unittest.TestCase):
         ]
         self.assertEquals(to_char_array(my_board), expected)
 
+    def test_from_char_array(self):
+        char_array = [
+            ['X', 'O', ' '],
+            ['O', 'O', 'X'],
+            ['X', 'X', 'O']
+        ]
+        expected = [
+            PLAYER_X, PLAYER_O, NO_PLAYER,
+            PLAYER_O, PLAYER_O, PLAYER_X,
+            PLAYER_X, PLAYER_X, PLAYER_O
+        ]
+        self.assertEquals(from_char_array(char_array), expected)
 if __name__ == '__main__':
     unittest.main()

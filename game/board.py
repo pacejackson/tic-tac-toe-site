@@ -1,6 +1,7 @@
 __author__ = 'andrewpboyle'
 import copy
-from game.player import NO_PLAYER, is_valid_player, get_player_char
+from itertools import chain
+from game.player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char
 
 
 def _get_index(x, y):
@@ -16,7 +17,10 @@ def _get_index(x, y):
 
 def new_board():
     """
-    Returns an empty board.
+    Returns an empty board.  Note that a board is a 1D array.  You should
+    not change a board directly, rather you should call the make_move
+    function on your current board to get the now board resulting from
+    that move.
     """
     return [NO_PLAYER] * 9
 
@@ -33,7 +37,7 @@ def _check_point_element(elem, elem_name):
     """
     if type(elem) is not int:
         raise TypeError('Input {0} must be of type int.'.format(elem_name))
-    if elem not in range(2):
+    if elem not in range(3):
         raise IndexError('Input {0} must be between 0 and 2'.format(elem_name))
 
 
@@ -91,8 +95,22 @@ def is_valid(current_board):
 
 
 def to_char_array(current_board):
+    """
+    Returns a 2D char array representing the board. PLAYER_X's moves are represented
+    by 'X', PLAYER_O's moves are represented by 'O', and empty spaces are represented
+    by ' '.  See player.get_player_char for errors this function may raise.
+
+    current_board - the board state you want to evaluate.
+    """
     char_array = [get_player_char(p) for p in current_board]
     return [char_array[0:3], char_array[3:6], char_array[6:]]
 
 def from_char_array(char_array_board):
-    result = new_board()
+    """
+    Returns a 1D board array based on the provided 2D char_array_board.  See
+    player.get_player_from_char for errors this function may raise.
+
+    char_array_board - a 2D char array representing the board.  It should be
+    formatted like a result from to_char_array
+    """
+    return [get_player_from_char(player_char) for player_char in chain(*char_array_board)]
