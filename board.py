@@ -3,8 +3,12 @@ import copy
 from player import NO_PLAYER, is_valid_player, get_player_char
 
 
-def result():
-    return [NO_PLAYER for x in range(9)]
+def _get_index(x, y):
+    return 3 * y + x
+
+
+def new_board():
+    return [NO_PLAYER] * 9
 
 
 def _check_point_element(elem, elem_name):
@@ -17,23 +21,31 @@ def _check_point_element(elem, elem_name):
 def _check_point(current_board, x, y):
     _check_point_element(x, 'x')
     _check_point_element(y, 'y')
-    if (x + y) > 8:
-        raise IndexError('x + y must be less than 9.')
-    if current_board[x + y] != 0:
+    index = _get_index(x, y)
+    if index > 8:
+        raise IndexError('x and y must both be less than 3.')
+    if current_board[index] != 0:
         raise Exception('Board at point ({0}, {1}) is already occupied.'.format(x, y))
 
 
 def make_move(current_board, x, y, p):
     _check_point(current_board, x, y)
-    if is_valid_player(p):
-        raise Exception("Input player must = PLAYER_X or PLAYER_Y.")
+    index = _get_index(x, y)
+    if not is_valid_player(p) or p == NO_PLAYER:
+        raise Exception('Input p must = PLAYER_X or PLAYER_O.  p = {0}'.format(p))
     result = copy.deepcopy(current_board)
-    result[x + y] = p
+    result[index] = p
     if not is_valid(result):
         player_name = get_player_char(p)
-        raise Exception('Move for {0} at ({0}, {1}) is invalid.'.format(player_name, x, y))
+        raise Exception('Move for {0} at ({1}, {2}) is invalid.'.format(player_name, x, y))
     return result
 
 
 def is_valid(current_board):
-    return sum(current_board) == 0
+    board_sum = sum(current_board)
+    return -1 <= board_sum <= 1
+
+
+def get_char_array(current_board):
+    char_array = [get_player_char(p) for p in current_board]
+    return [char_array[0:3], char_array[3:6], char_array[6:]]
