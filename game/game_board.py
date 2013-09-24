@@ -46,6 +46,10 @@ def _check_point_element(elem, elem_name):
         raise IndexError('Input {0} must be between 0 and 2'.format(elem_name))
 
 
+def _check_point_boundaries(x, y):
+    _check_point_element(x, 'x')
+    _check_point_element(y, 'y')
+
 def _check_point(board, x, y):
     """
     Checks that each point element is correct, then checks that the point is
@@ -56,8 +60,7 @@ def _check_point(board, x, y):
     x - the column where your point is in 2D.
     y - the row where your point is in 2D.
     """
-    _check_point_element(x, 'x')
-    _check_point_element(y, 'y')
+    _check_point_boundaries(x, y)
     index = _get_index(x, y)
     if board[index] != 0:
         raise Exception('Board at point ({0}, {1}) is already occupied.'.format(x, y))
@@ -125,7 +128,7 @@ def from_char_array(char_array_board):
 def rotate_board(board, num_rotations):
     """
     Returns a new board that is equal to the supplied board rotated num_rotations
-    times.
+    times.  The board is rotated clockwise.
 
     board - the 1D board array you want to rotate.
     num_rotations - the number of rotations you want to do.
@@ -135,12 +138,12 @@ def rotate_board(board, num_rotations):
     num_rotations %= 4
     result = copy.deepcopy(board)
     for i in range(num_rotations):
-        result[2], result[0] = result[0], result[2]
-        result[8], result[2] = result[2], result[8]
         result[6], result[8] = result[8], result[6]
-        result[1], result[3] = result[3], result[1]
-        result[1], result[5] = result[5], result[1]
+        result[8], result[2] = result[2], result[8]
+        result[0], result[2] = result[2], result[0]
+        result[3], result[7] = result[7], result[3]
         result[5], result[7] = result[7], result[5]
+        result[1], result[5] = result[5], result[1]
     return result
 
 
@@ -182,7 +185,7 @@ def has_won(board, player):
 
 def get_state_at_point(board, x, y):
     """
-    Returns the state of the board at the supplied x, y.  See _check_point
+    Returns the state of the board at the supplied x, y.  See _check_point_boundaries
     for errors this function may raise.  Will return either PLAYER_X,
     PLAYER_O, or NO_PLAYER
 
@@ -190,5 +193,26 @@ def get_state_at_point(board, x, y):
     x - the column where your point is in 2D.  0 <= x <= 2
     y - the row where your point is in 2D.  0 <= y <= 2
     """
-    _check_point(board, x, y)
+    _check_point_boundaries(x, y)
     return board[_get_index(x, y)]
+
+
+def rotate_point(x, y, num_rotations):
+    """
+    Rotates the point given by x, y around the center of the board
+    num_rotations times.  See _check_point_boundaries for errors this function may
+    raise.
+
+    x - the column where your point is in 2D.  0 <= x <= 2
+    y - the row where your point is in 2D.  0 <= y <= 2
+    num_rotations - the number of rotations you want to do.
+    """
+    _check_point_boundaries(x, y)
+    r_x = x
+    r_y = y
+    num_rotations %= 4
+    for i in range(num_rotations):
+        temp = r_y
+        r_x = 2 - r_y
+        r_y = temp
+    return r_x, r_y

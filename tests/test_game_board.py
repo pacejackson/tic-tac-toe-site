@@ -2,7 +2,7 @@ __author__ = 'andrewpboyle'
 
 import unittest
 from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.game_board import new_board, make_move, to_char_array, from_char_array, has_won, get_all_moves
+from game.game_board import new_board, make_move, to_char_array, from_char_array, has_won, get_all_moves, rotate_board
 
 
 class TestBoard(unittest.TestCase):
@@ -135,6 +135,7 @@ class TestBoard(unittest.TestCase):
             ['X', 'X', 'O']
         ]
         self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
+        self.assertFalse(has_won(from_char_array(char_array), PLAYER_O))
 
         #test cols
 
@@ -222,5 +223,22 @@ class TestBoard(unittest.TestCase):
         expected_moves = []
         moves = get_all_moves(from_char_array(char_array), PLAYER_X)
         self.assertEquals(moves, expected_moves)
+
+    def test_rotate_board(self):
+        char_array = [
+            ['X', 'O', ' '],
+            ['O', 'O', 'X'],
+            ['X', 'X', 'O']
+        ]
+        board = from_char_array(char_array)
+        expected_char_array = [
+            ['X', 'O', 'X'],
+            ['X', 'O', 'O'],
+            ['O', 'X', ' ']
+        ]
+        expected = from_char_array(expected_char_array)
+        self.assertEquals(rotate_board(board, 1), expected)
+
+
 if __name__ == '__main__':
     unittest.main()
