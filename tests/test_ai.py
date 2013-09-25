@@ -1,11 +1,11 @@
 __author__ = 'andrewpboyle'
 
-from game.game_board import new_board, make_move, to_char_array
+from game.game_board import new_board, make_move, to_2d_char_array
 from game.tic_tac_toe_ai import get_move
 import config
 
 def print_board(board):
-    char_board = to_char_array(board)
+    char_board = to_2d_char_array(board)
     for line in char_board:
         print line
 

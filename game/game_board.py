@@ -102,7 +102,7 @@ def is_valid(board):
     return -1 <= board_sum <= 1
 
 
-def to_char_array(board):
+def to_2d_char_array(board):
     """
     Returns a 2D char array representing the board. PLAYER_X's moves are represented
     by 'X', PLAYER_O's moves are represented by 'O', and empty spaces are represented
@@ -114,15 +114,37 @@ def to_char_array(board):
     return [char_array[0:3], char_array[3:6], char_array[6:]]
 
 
-def from_char_array(char_array_board):
+def from_2d_char_array(char_array_board):
     """
     Returns a 1D board array based on the provided 2D char_array_board.  See
     game_player.get_game_player_from_char for errors this function may raise.
 
     char_array_board - a 2D char array representing the board.  It should be
-    formatted like a result from to_char_array
+    formatted like a result from to_2d_char_array
     """
     return [get_player_from_char(game_player_char) for game_player_char in chain(*char_array_board)]
+
+
+def to_1d_char_array(board):
+    """
+    Returns a 1D char array representing the board. PLAYER_X's moves are represented
+    by 'X', PLAYER_O's moves are represented by 'O', and empty spaces are represented
+    by ' '.  See game_player.get_game_player_char for errors this function may raise.
+
+    board - the board state you want to evaluate.
+    """
+    return [get_player_char(p) for p in board]
+
+
+def from_1d_char_array(char_array_board):
+    """
+    Returns a 1D board array based on the provided 1D char_array_board.  See
+    game_player.get_game_player_from_char for errors this function may raise.
+
+    char_array_board - a 2D char array representing the board.  It should be
+    formatted like a result from to_2d_char_array
+    """
+    return [get_player_from_char(game_player_char) for game_player_char in char_array_board]
 
 
 def rotate_board(board, num_rotations):

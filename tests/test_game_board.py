@@ -2,8 +2,8 @@ __author__ = 'andrewpboyle'
 
 import unittest
 from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
-from game.game_board import new_board, make_move, to_char_array, \
-    from_char_array, has_won, get_all_moves, rotate_board, rotate_point
+from game.game_board import new_board, make_move, to_2d_char_array, \
+    from_2d_char_array, has_won, get_all_moves, rotate_board, rotate_point
 
 
 class TestBoard(unittest.TestCase):
@@ -51,70 +51,70 @@ class TestBoard(unittest.TestCase):
             [' ', ' ', ' '],
             [' ', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 0, 0, PLAYER_X)
         expected = [
             ['X', ' ', ' '],
             [' ', ' ', ' '],
             [' ', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 1, 1, PLAYER_O)
         expected = [
             ['X', ' ', ' '],
             [' ', 'O', ' '],
             [' ', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 0, 2, PLAYER_X)
         expected = [
             ['X', ' ', ' '],
             [' ', 'O', ' '],
             ['X', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 0, 1, PLAYER_O)
         expected = [
             ['X', ' ', ' '],
             ['O', 'O', ' '],
             ['X', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 2, 1, PLAYER_X)
         expected = [
             ['X', ' ', ' '],
             ['O', 'O', 'X'],
             ['X', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 1, 0, PLAYER_O)
         expected = [
             ['X', 'O', ' '],
             ['O', 'O', 'X'],
             ['X', ' ', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 1, 2, PLAYER_X)
         expected = [
             ['X', 'O', ' '],
             ['O', 'O', 'X'],
             ['X', 'X', ' ']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 2, 2, PLAYER_O)
         expected = [
             ['X', 'O', ' '],
             ['O', 'O', 'X'],
             ['X', 'X', 'O']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
         my_board = make_move(my_board, 2, 0, PLAYER_X)
         expected = [
             ['X', 'O', 'X'],
             ['O', 'O', 'X'],
             ['X', 'X', 'O']
         ]
-        self.assertEquals(to_char_array(my_board), expected)
+        self.assertEquals(to_2d_char_array(my_board), expected)
 
     def test_from_char_array(self):
         char_array = [
@@ -127,7 +127,7 @@ class TestBoard(unittest.TestCase):
             PLAYER_O, PLAYER_O, PLAYER_X,
             PLAYER_X, PLAYER_X, PLAYER_O
         ]
-        self.assertEquals(from_char_array(char_array), expected)
+        self.assertEquals(from_2d_char_array(char_array), expected)
 
     def test_has_won(self):
         char_array = [
@@ -135,8 +135,8 @@ class TestBoard(unittest.TestCase):
             ['O', 'O', 'X'],
             ['X', 'X', 'O']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_O))
 
         #test cols
 
@@ -145,22 +145,22 @@ class TestBoard(unittest.TestCase):
             ['O', 'O', 'X'],
             ['X', 'O', 'X']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
         char_array = [
             ['O', 'X', ' '],
             ['O', 'O', 'X'],
             ['O', 'X', 'X']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
         char_array = [
             ['X', ' ', 'O'],
             ['O', 'X', 'O'],
             ['X', 'X', 'O']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
 
         #test diags
 
@@ -169,15 +169,15 @@ class TestBoard(unittest.TestCase):
             ['O', 'O', 'X'],
             ['X', 'X', 'O']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
         char_array = [
             ['X', 'X', 'O'],
             ['O', 'O', 'X'],
             ['O', 'X', ' ']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
 
         #test rows
 
@@ -186,22 +186,22 @@ class TestBoard(unittest.TestCase):
             ['O', 'O', 'O'],
             ['X', ' ', 'X']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
         char_array = [
             ['O', 'O', 'O'],
             ['X', 'O', 'X'],
             ['X', ' ', 'X']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
         char_array = [
             ['X', 'O', 'X'],
             ['X', ' ', 'X'],
             ['O', 'O', 'O']
         ]
-        self.assertFalse(has_won(from_char_array(char_array), PLAYER_X))
-        self.assertTrue(has_won(from_char_array(char_array), PLAYER_O))
+        self.assertFalse(has_won(from_2d_char_array(char_array), PLAYER_X))
+        self.assertTrue(has_won(from_2d_char_array(char_array), PLAYER_O))
 
     def test_get_all_moves(self):
         char_array = [
@@ -213,7 +213,7 @@ class TestBoard(unittest.TestCase):
             (1, 0), (2, 0), (0, 1), (2, 1),
             (0, 2), (1, 2), (2, 2)
         ]
-        moves = get_all_moves(from_char_array(char_array), PLAYER_X)
+        moves = get_all_moves(from_2d_char_array(char_array), PLAYER_X)
         for move in expected_moves:
             self.assertIn(move, moves)
         char_array = [
@@ -222,7 +222,7 @@ class TestBoard(unittest.TestCase):
             [' ', 'O', ' ']
         ]
         expected_moves = []
-        moves = get_all_moves(from_char_array(char_array), PLAYER_X)
+        moves = get_all_moves(from_2d_char_array(char_array), PLAYER_X)
         self.assertEquals(moves, expected_moves)
 
     def test_rotate_board(self):
@@ -231,13 +231,13 @@ class TestBoard(unittest.TestCase):
             ['O', 'O', 'X'],
             ['X', 'X', 'O']
         ]
-        board = from_char_array(char_array)
+        board = from_2d_char_array(char_array)
         expected_char_array = [
             ['X', 'O', 'X'],
             ['X', 'O', 'O'],
             ['O', 'X', ' ']
         ]
-        expected = from_char_array(expected_char_array)
+        expected = from_2d_char_array(expected_char_array)
         self.assertEquals(rotate_board(board, 1), expected)
 
     def test_rotate_point(self):

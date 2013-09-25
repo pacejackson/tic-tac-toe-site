@@ -6,6 +6,7 @@ import config
 
 INF = float('inf')
 NEG_INF = float('-inf')
+NO_MOVES = [-1, -1]
 
 
 minimax_result = namedtuple('minimax_result', ['score', 'x', 'y'])

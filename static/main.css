@@ -1,9 +1,3 @@
-.play_canvas {
-    margin: 0 auto;
-    border: 2px solid black;
-    height: 100px;
-    width: 100px;
-}
 
 .game_board {
     background-color: transparent;
@@ -12,6 +6,34 @@
     margin: 0 auto;
 }
 
-.moused_over {
+.game_board .play_canvas {
+    border: 2px solid black;
+}
+
+.game_board .moused_over {
     border-color: lightskyblue;
+}
+
+.start_menu {
+    background-color: lightblue;
+    height: 400px;
+    width: 400px;
+    position: absolute;
+    margin: 0 auto;
+    -moz-transition: top 0.2s;
+    -o-transition: top 0.2s;
+    -webkit-transiton: top 0.2s;
+    transition: top 0.2s;
+}
+
+.start_menu .title {
+    font-family: helvetica;
+    text-align: center;
+    position: relative;
+    padding-top: 75px;
+    margin: 0 auto;
+}
+
+.hide_menu {
+    top: -400px;
 }
