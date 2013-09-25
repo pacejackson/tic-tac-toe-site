@@ -50,8 +50,8 @@ $(document).ready(function() {
             }
 
             else{
-                draw_O(context)
-                board[canvas_num] = 'O';
+            draw_O(context)
+            board[canvas_num] = 'O';
             }
             turn++;
         }

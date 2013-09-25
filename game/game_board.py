@@ -9,7 +9,7 @@ WINNING_PATTERNS = (0b111000000, 0b000111000, 0b000000111,  # rows
                     0b100010001, 0b001010100)               # diags
 
 
-def _get_index(x, y):
+def get_index(x, y):
     """
     Returns maps the 2D index (x, y) to a 1D index and returns it.
     The mapping is index = 3 * y + x.
@@ -61,7 +61,7 @@ def _check_point(board, x, y):
     y - the row where your point is in 2D.
     """
     _check_point_boundaries(x, y)
-    index = _get_index(x, y)
+    index = get_index(x, y)
     if board[index] != 0:
         raise Exception('Board at point ({0}, {1}) is already occupied.'.format(x, y))
 
@@ -80,7 +80,7 @@ def make_move(board, x, y, p):
     p - the game_player making the move. p=1 or p=-1
     """
     _check_point(board, x, y)
-    index = _get_index(x, y)
+    index = get_index(x, y)
     if not is_valid_player(p) or p == NO_PLAYER:
         raise Exception('Input p must = PLAYER_X or PLAYER_O.  p = {0}'.format(p))
     result = copy.deepcopy(board)
@@ -180,7 +180,7 @@ def get_all_moves(board, player):
     if not (has_won(board, player) or has_won(board, get_opponent(player))):
         for x in range(3):
             for y in range(3):
-                index = _get_index(x, y)
+                index = get_index(x, y)
                 if board[index] == NO_PLAYER:
                     moves += [(x, y)]
     return moves
@@ -196,7 +196,7 @@ def has_won(board, player):
     check = 0b000000000
     for x in range(3):
         for y in range(3):
-            index = _get_index(x, y)
+            index = get_index(x, y)
             if board[index] == player:
                 check |= (1 << index)
     for pattern in WINNING_PATTERNS:
@@ -216,7 +216,7 @@ def get_state_at_point(board, x, y):
     y - the row where your point is in 2D.  0 <= y <= 2
     """
     _check_point_boundaries(x, y)
-    return board[_get_index(x, y)]
+    return board[get_index(x, y)]
 
 
 def rotate_point(x, y, num_rotations):
