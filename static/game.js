@@ -266,11 +266,21 @@ var user_char;
 $(document).ready(function() {
     user_char = ' ';
 
+    /**
+     * Hide the start menu and initialize the board with the player's
+     * chosen shape and whether they want to go first or not.
+     */
     function initialize() {
         $('#start-menu').addClass('hide_menu');
         board.init(user_char, user_first);
     };
 
+    /**
+     * Mark that the user has selected set_button and deselect other_button
+     * if it has been clicked.  Enable first_button and second_button.
+     * @param set_button - The player shape button that was clicked.
+     * @param other_button - The other player shape button.
+     */
     function set_user_char(set_button, other_button) {
         if(other_button.hasClass('button-flat-caution')) {
           other_button.removeClass('button-flat-caution');
@@ -282,6 +292,11 @@ $(document).ready(function() {
         $('#second_button').removeClass('disabled');
     };
 
+    /**
+     * Click handler for the button a user pushes to choose to go first.
+     * Only works after they have selected a shape.  When it is clicked,
+     * it will disable itself and second_button and start the game.
+     */
     $('#first_button').on('click', function () {
         if(!$(this).hasClass('disabled')){
             user_first = true;
@@ -291,6 +306,11 @@ $(document).ready(function() {
         };
     });
 
+    /**
+     * Click handler for the button a user pushes to choose to go second.
+     * Only works after they have selected a shape.  When it is clicked,
+     * it will disable itself and first_button and start the game.
+     */
     $('#second_button').on('click', function () {
         if(!$(this).hasClass('disabled')){
             user_first = false;
@@ -300,11 +320,17 @@ $(document).ready(function() {
         };
     });
 
+    /**
+     * Click handler for the select O button.
+     */
     $('#O_button').on('click', function () {
         user_char = SHAPE_O;
         set_user_char($(this), $('#X_button'));
     });
 
+    /**
+     * Click handler for the select X button.
+     */
     $('#X_button').on('click', function () {
         user_char = SHAPE_X;
         set_user_char($(this), $('#O_button'));
