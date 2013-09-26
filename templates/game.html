@@ -1,12 +1,19 @@
 {% extends "base.html" %}
-
 {% block game %}
         <div class="game_board">
             <div class="start_menu">
                 <h1 class="title">Welcome to tic-tac-toe!</h1>
-                <form>
+                <table class="choice_buttons">
+                    <tr id="shape_choice">
+                        <td><a href="#" id="O_button" class="button button-flat button-large">Choose O</a></td>
+                        <td><a href="#" id="X_button" class="button button-flat button-large">Choose X</a></td>
+                    </tr>
 
-                </form>
+                    <tr id="order_choice">
+                        <td><a href="#" id="first_button" class="button button-flat button-large disabled">Play First</a></td>
+                        <td><a href="#" id="second_button" class="button button-flat button-large disabled">Play Second</a></td>
+                    </tr>
+                </table>
             </div>
             <canvas id="tic_tac_toe_box_0"
                     class="play_canvas"

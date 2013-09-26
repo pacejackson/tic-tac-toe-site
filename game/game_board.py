@@ -136,7 +136,7 @@ def to_1d_char_array(board):
     return [get_player_char(p) for p in board]
 
 
-def from_1d_char_array(char_array_board):
+def from_1d_char_array(char_array_board, ):
     """
     Returns a 1D board array based on the provided 1D char_array_board.  See
     game_player.get_game_player_from_char for errors this function may raise.
