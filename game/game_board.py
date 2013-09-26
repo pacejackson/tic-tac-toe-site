@@ -1,5 +1,6 @@
 __author__ = 'andrewpboyle'
 import copy
+import config
 from itertools import chain
 from game.game_player import NO_PLAYER, is_valid_player, get_player_char, get_player_from_char, get_opponent
 
@@ -245,3 +246,23 @@ def is_empty(board):
     Returns True if the board is empty. i.e. in is equal to a new_board()
     """
     return board == new_board()
+
+def is_full(board):
+    """
+    Returns True if the board is full.  i.e. there are no empty spaces.
+    """
+    return 0 not in board
+
+def get_board_state(board):
+    """
+    Returns a tuple with the form (board_state, message)
+    """
+    if not is_valid(board):
+        return config.ERROR, 'The given board is not valid.'
+    if has_won(board, config.computer):
+        return config.CPU_WINS, 'Computer wins.'
+    elif has_won(board, config.human):
+        return config.USER_WINS, 'User wins.'
+    elif is_full(board):
+        return config.CATS_GAME, "Cat's game"
+    return config.ONGOING, 'Ongoing.'

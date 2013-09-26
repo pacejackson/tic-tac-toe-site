@@ -9,7 +9,7 @@
 
 var ERROR     = 'error';
 var ONGOING   = 'ongoing';
-var CPU_WINS  = 'computer_wins';
+var CPU_WINS  = 'cpu_wins';
 var USER_WINS = 'user_wins';
 var CATS_GAME = 'cats_game';
 
@@ -106,32 +106,31 @@ var board = {
     },
 
     computer_turn: function() {
-        board.game_over(ERROR);
-        var result = {}
-        /*
-        $.ajax('url', {
+        var board_input = JSON.stringify(board.game_board)
+        $.ajax('/api.json', {
            type: 'GET',
-           data: {'board': board},
+           data: {board: board_input},
            dataType: 'json',
            contentType: 'application/json',
-           beforeSend: ajax_before_send,
-           success: ajax_success,
-           error: ajax_error,
-           complete: ajax_complete
+           timeout: 3000,
+           beforeSend: board.ajax_before_send,
+           success: board.ajax_success,
+           error: board.ajax_error,
+           complete: board.ajax_complete
         });
-        */
+
     },
 
     ajax_success: function(response) {
         var move = response.move_1d;
-        var state = respones.game_state;
+        var state = response.game_state;
         if(board.game_board[move] == 0) {
             var canvas_id = 'tic_tac_toe_box_' + move;
             board.draw_shape(board.computer_shape, canvas_id);
             board.game_board[move] = CPU_VALUE;
             board.can_click = true;
         }
-        else {
+        else if (state == ONGOING) {
             state = ERROR;
         }
         if (state != ONGOING) {

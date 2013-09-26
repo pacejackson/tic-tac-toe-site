@@ -3,7 +3,8 @@ __author__ = 'andrewpboyle'
 import unittest
 from game.game_player import NO_PLAYER, PLAYER_O, PLAYER_X
 from game.game_board import new_board, make_move, to_2d_char_array, \
-    from_2d_char_array, has_won, get_all_moves, rotate_board, rotate_point
+    from_2d_char_array, has_won, get_all_moves, rotate_board, rotate_point, \
+    is_full
 
 
 class TestBoard(unittest.TestCase):
@@ -254,6 +255,13 @@ class TestBoard(unittest.TestCase):
         }
         for p in point_to_expected.keys():
             self.assertEquals(rotate_point(p[0], p[1], 1), point_to_expected[p])
+
+    def test_is_full(self):
+        board = new_board()
+        for i in range(9):
+            self.assertFalse(is_full(board))
+            board[i] = 1
+        self.assertTrue(is_full(board))
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ m = get_move(board, computer)
 board = make_move(board, m[0], m[1], computer)
 print_board(board)
 '''
-board = make_move(board, 0, 0, human)
+board = make_move(board, 0, 1, human)
 print_board(board)
 m = get_move(board, computer)
 board = make_move(board, m[0], m[1], computer)

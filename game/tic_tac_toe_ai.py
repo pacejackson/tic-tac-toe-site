@@ -3,6 +3,7 @@ from game_board import get_all_moves, make_move, get_state_at_point, is_empty
 from game_player import get_opponent
 from collections import namedtuple
 import config
+import logging
 
 INF = float('inf')
 NEG_INF = float('-inf')
@@ -57,6 +58,8 @@ def minimax(board, player, depth, alpha, beta):
         return minimax_result(score=score, x=best_x, y=best_y)
     else:
         for move in moves:
+            logging.error(board)
+            logging.error(player)
             new_board = make_move(board, move[0], move[1], player)
             if player == config.computer:
                 result = minimax(new_board, opponent, depth - 1, alpha, beta)

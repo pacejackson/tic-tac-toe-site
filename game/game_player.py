@@ -1,8 +1,8 @@
 __author__ = 'andrewpboyle'
 
 
-PLAYER_X = 1
-PLAYER_O = -1
+PLAYER_X = -1
+PLAYER_O = 1
 NO_PLAYER = 0
 PLAYER_CHARS = [' ', 'X', 'O']
 PLAYER_MAP = {
