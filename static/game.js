@@ -16,6 +16,9 @@ var CATS_GAME = 'cats_game';
 var CPU_VALUE   = -1;
 var HUMAN_VALUE = 1;
 
+var SHAPE_X = 'X'
+var SHAPE_O = 'O'
+
 var SPINNER = '<div class="spinner"></div>';
 
 var board = {
@@ -26,11 +29,11 @@ var board = {
         };
         this.play_first = play_first;
         this.player_shape = player_shape;
-        if(player_shape == 'X') {
-            this.computer_shape = 'O';
+        if(player_shape == SHAPE_X) {
+            this.computer_shape = SHAPE_O;
         }
         else {
-            this.computer_shape = 'X';
+            this.computer_shape = SHAPE_X;
         }
         this.can_click = this.play_first;
         $('.game_board').on('mouseenter', 'canvas', this.mouse_over_box);
@@ -63,9 +66,15 @@ var board = {
         context.closePath();
     },
 
+    /**
+     * Draws the given shape on the canvas given by canvas_id.
+     * @param shape - the shape you want to draw.  Should be SHAPE_X or SHAPE_O
+     * @param canvas_id - the id of the canvas to draw it on.  We will add the
+     * '#' to the front when making the jQuery calls, so don't add it.
+     */
     draw_shape: function (shape, canvas_id) {
         var context = $('#' + canvas_id)[0].getContext('2d');
-        if(shape == 'X') {
+        if(shape == SHAPE_X) {
             board.draw_X(context);
         }
         else {
@@ -217,12 +226,12 @@ $(document).ready(function() {
     });
 
     $('#O_button').on('click', function () {
-        user_char = 'O';
+        user_char = SHAPE_O;
         set_user_char($(this), $('#X_button'));
     });
 
     $('#X_button').on('click', function () {
-        user_char = 'X';
+        user_char = SHAPE_X;
         set_user_char($(this), $('#O_button'));
     });
 });
