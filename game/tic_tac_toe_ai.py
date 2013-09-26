@@ -58,8 +58,6 @@ def minimax(board, player, depth, alpha, beta):
         return minimax_result(score=score, x=best_x, y=best_y)
     else:
         for move in moves:
-            logging.error(board)
-            logging.error(player)
             new_board = make_move(board, move[0], move[1], player)
             if player == config.computer:
                 result = minimax(new_board, opponent, depth - 1, alpha, beta)

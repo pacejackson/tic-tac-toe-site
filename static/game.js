@@ -124,6 +124,7 @@ var board = {
     ajax_success: function(response) {
         var move = response.move_1d;
         var state = response.game_state;
+        var message = response.message;
         if(board.game_board[move] == 0) {
             var canvas_id = 'tic_tac_toe_box_' + move;
             board.draw_shape(board.computer_shape, canvas_id);
@@ -134,7 +135,7 @@ var board = {
             state = ERROR;
         }
         if (state != ONGOING) {
-            board.game_over(state);
+            board.game_over(state, message);
         }
 
     },
@@ -148,14 +149,14 @@ var board = {
     },
 
     ajax_error: function() {
-        board.game_over(ERROR);
+        board.game_over(ERROR, 'There was an error running the AJAX request.');
     },
 
-    game_over: function(result) {
+    game_over: function(result, m) {
         var message = '';
         switch (result) {
             case ERROR:
-                message = '<h1 class="title">Sorry, there was an error.</h1>';
+                message = '<h1 class="title">Sorry, there was an error.  ' + m + '</h1>';
                 break;
             case CATS_GAME:
                 message = '<h1 class="title">Cat\'s Game!</h1>';

@@ -255,7 +255,10 @@ def is_full(board):
 
 def get_board_state(board):
     """
-    Returns a tuple with the form (board_state, message)
+    Returns a tuple with the form (board_state, message) based on the state of the
+    current board.  If the board is not valid, the state will be error.  If the
+    computer has one, the state will be cpu_wins.  If the player has won, the state
+    will be user_wins.  If the game is still going, it will be ongoing.
     """
     if not is_valid(board):
         return config.ERROR, 'The given board is not valid.'

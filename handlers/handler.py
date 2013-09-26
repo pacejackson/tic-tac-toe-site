@@ -4,8 +4,9 @@ import utils
 
 
 class Handler(webapp2.RequestHandler):
-    user = None
-
+    """
+    Base handler class.  Provides some convenience write and render methods.
+    """
     def write(self, *a, **kw):
         self.response.write(*a, **kw)
 
