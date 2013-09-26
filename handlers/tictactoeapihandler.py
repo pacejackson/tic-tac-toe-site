@@ -10,7 +10,7 @@ import json
 class TicTacToeAPIHandler(JSONHandler):
     def get(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
-        board = from_1d_char_array(self.request.get('board'))
+        board = self.request.get('board')
         next_move_2d = utils.get_move(board, config.computer)
         next_move_1d = get_index(next_move_2d[0], next_move_2d[1])
         game_state = 'ongoing'
@@ -25,6 +25,7 @@ class TicTacToeAPIHandler(JSONHandler):
                   'move_1d': next_move_1d, 'game_state': game_state}
         self.render_json(result)
 
+    '''
     def post(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
 
@@ -32,3 +33,4 @@ class TicTacToeAPIHandler(JSONHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
 
+    '''
