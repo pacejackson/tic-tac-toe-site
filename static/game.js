@@ -22,7 +22,14 @@ var SHAPE_O = 'O'
 var SPINNER = '<div class="spinner"></div>';
 
 var board = {
+    /**
+     * Initialize the tic-tac-toe board.
+     * @param player_shape - the shape that the player picked, should be SHAPE_X
+     * or SHAPE_O.
+     * @param play_first - True if the player chose to play first, false if not.
+     */
     init: function(player_shape, play_first) {
+        //initialize board state
         this.game_board = new Array();
         for(var i = 0; i < 9; i++) {
             this.game_board[i] = 0;
@@ -36,10 +43,12 @@ var board = {
             this.computer_shape = SHAPE_X;
         }
         this.can_click = this.play_first;
+        //set up event handlers
         $('.game_board').on('mouseenter', 'canvas', this.mouse_over_box);
         $('.game_board').on('mouseleave', 'canvas', this.mouse_leave_box);
         $('.game_board').on('click', 'canvas', this.box_clicked);
         $('#reset-button').on('click', function () { location.reload(); });
+        // get the computer's move if the player is going second
         if(!this.play_first) {
             this.computer_turn();
         }
@@ -48,6 +57,11 @@ var board = {
     /**
      * code to draw X and O from:
      * http://www.dreamincode.net/forums/topic/247361-simple-tic-tac-toe-using-html5-css3-and-javascript/
+     */
+
+    /**
+     * Draw an X using the given context.
+     * @param context - The 2d context of the canvas you want to draw on.
      */
     draw_X: function (context) {
         context.beginPath();
@@ -59,6 +73,10 @@ var board = {
         context.closePath();
     },
 
+    /**
+     * Draw an O using the given context.
+     * @param context - The 2d context of the canvas you want to draw on.
+     */
     draw_O: function (context) {
         context.beginPath();
         context.arc(62,63,55,0,Math.PI*2,true);
@@ -82,6 +100,11 @@ var board = {
         }
     },
 
+    /**
+     * Mouseover event handler that highlights the box you are mousing over
+     * in blue if the box is empty.
+     * @param event
+     */
     mouse_over_box: function (event) {
         if(board.can_click) {
             var split_id = event.target.id.split('_');
@@ -92,12 +115,26 @@ var board = {
         }
     },
 
+    /**
+     * Mouseleave event handler that removes the highlight from the box you
+     * were mousing over if it was highlighted.
+     * @param event
+     */
     mouse_leave_box: function (event) {
         if($(event.target).hasClass('moused_over')){
             $(event.target).removeClass('moused_over');
         };
     },
 
+    /**
+     * Click event handler that triggers when you click on a canvas that is a part
+     * of the game board.  If the space is empty and you can click (you are not waiting
+     * for the computer to make their move) it will draw board.player_shape in the canvas
+     * you clicked on, mark that in the board.game_board, and start the computer's turn.
+     * You will get an alert if you are allowed to click and the box you click on is
+     * full.
+     * @param event
+     */
     box_clicked: function (event) {
         if(board.can_click) {
             board.can_click = false;
@@ -114,6 +151,11 @@ var board = {
         }
     },
 
+    /**
+     * Takes the computer's turn.  Sends the current board to the tic-tac-toe API
+     * using an ajax request.  The board will be updated once the request finishes
+     * or errors out.
+     */
     computer_turn: function() {
         var board_input = JSON.stringify(board.game_board)
         $.ajax('/api.json', {
@@ -130,6 +172,17 @@ var board = {
 
     },
 
+    /**
+     * Runs when the ajax call to the API completes successfully.  Gets
+     * the results from the call and updates the game accordingly.
+     * @param response - the response from the ajax call to the API.  Should
+     * have a move_1d paramater, specifying the 1d index of the row-major
+     * representation of the tic-tac-toe board where the computer is making
+     * it's move.  It should also have a game_state paramater to let us know
+     * if the game is over or if there was an error.  We also expect a
+     * message parameter that lets the API pass us extra information about the
+     * board state or any errors.
+     */
     ajax_success: function(response) {
         var move = response.move_1d;
         var state = response.game_state;
@@ -149,18 +202,40 @@ var board = {
 
     },
 
+    /**
+     * Starts the CSS spinner before the ajax call is sent.
+     */
     ajax_before_send: function() {
         $('#start-menu').before($(SPINNER));
     },
 
+    /**
+     * Removes the CSS spinner once the ajax call is completed.
+     */
     ajax_complete: function() {
         $('.spinner').remove();
     },
 
+    /**
+     * ajax error handler.  Ends the game with an error message when it is
+     * called.
+     */
     ajax_error: function() {
         board.game_over(ERROR, 'There was an error running the AJAX request.');
     },
 
+    /**
+     * Ends the game based on the provided result.  Pulls down the game over
+     * menu with the game over message and a restart button.
+     * @param result - string representing the result of the game.  The
+     * values it expects are:
+     *  'error': Error message.
+     *  'cats_game': The game is over in a tie.
+     *  'user_wins': The player has won the game.
+     *  'cpu_wins': The computer has won the game.
+     * @param m - the message that you want to add to the error message if you
+     * have one.
+     */
     game_over: function(result, m) {
         var message = '';
         switch (result) {
