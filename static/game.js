@@ -387,6 +387,7 @@ var start_menu = {
      * handlers.  Set start_menu.user_char to the given shape.
      * @param set_button - The player shape button that was clicked.
      * @param other_button - The other player shape button.
+     * @param other_handler - handler function for the click event on other_button.
      * @param shape - the shape that the user selected.
      */
      set_user_char: function(set_button, other_button, other_handler, shape) {
