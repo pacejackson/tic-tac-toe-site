@@ -371,14 +371,14 @@ var start_menu = {
      * Click handler for the select X button.
      */
     x_click_handler: function() {
-        start_menu.set_user_char(start_menu.x_button, start_menu.o_button, SHAPE_X);
+        start_menu.set_user_char(start_menu.x_button, start_menu.o_button, start_menu.o_click_handler, SHAPE_X);
     },
 
     /**
      * Click handler for the select O button.
      */
     o_click_handler: function() {
-        start_menu.set_user_char(start_menu.o_button, start_menu.x_button, SHAPE_O);
+        start_menu.set_user_char(start_menu.o_button, start_menu.x_button, start_menu.x_click_handler, SHAPE_O);
     },
 
     /**
@@ -389,18 +389,25 @@ var start_menu = {
      * @param other_button - The other player shape button.
      * @param shape - the shape that the user selected.
      */
-     set_user_char: function(set_button, other_button, shape) {
+     set_user_char: function(set_button, other_button, other_handler, shape) {
         start_menu.user_char = shape;
         if(other_button.hasClass(RED_BUTTON_CLASS)) {
-          other_button.removeClass(RED_BUTTON_CLASS);
-          other_button.addClass(WHITE_BUTTON_CLASS);
+            other_button.removeClass(RED_BUTTON_CLASS);
+            other_button.addClass(WHITE_BUTTON_CLASS);
+            other_button.on(CLICK, other_handler)
         }
         set_button.removeClass(WHITE_BUTTON_CLASS)
         set_button.addClass(RED_BUTTON_CLASS);
-        start_menu.first_button.removeClass(DISABLED_CLASS);
-        start_menu.second_button.removeClass(DISABLED_CLASS);
-        start_menu.first_button.on(CLICK, start_menu.first_click_handler);
-        start_menu.second_button.on(CLICK, start_menu.second_click_handler);
+        set_button.off(CLICK);
+
+        if(start_menu.first_button.hasClass(DISABLED_CLASS)) {
+            start_menu.first_button.removeClass(DISABLED_CLASS);
+            start_menu.first_button.on(CLICK, start_menu.first_click_handler);
+        }
+        if(start_menu.second_button.hasClass(DISABLED_CLASS)) {
+            start_menu.second_button.removeClass(DISABLED_CLASS);
+            start_menu.second_button.on(CLICK, start_menu.second_click_handler);
+        }
     },
 
     /**
