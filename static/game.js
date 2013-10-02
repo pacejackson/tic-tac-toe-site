@@ -33,6 +33,22 @@ var MOUSE_LEAVE = 'mouseleave';
 
 var CANVAS_ID = 'tic_tac_toe_box_';
 
+/**
+ * Object used to represent the game board.
+ * @type {{init: Function,
+ * draw_X: Function,
+ * draw_O: Function,
+ * draw_shape: Function,
+ * mouse_over_box: Function,
+ * mouse_leave_box: Function,
+ * box_clicked: Function,
+ * computer_turn: Function,
+ * ajax_success: Function,
+ * ajax_before_send: Function,
+ * ajax_complete: Function,
+ * ajax_error: Function,
+ * game_over: Function}}
+ */
 var board = {
     /**
      * Initialize the tic-tac-toe board.
@@ -277,7 +293,17 @@ var board = {
     }
 };
 
+/**
+ * Object that represents the game over board.  Displays the
+ * game over message and has a button to restart the game.
+ * @type {{init: Function, reset: Function}}
+ */
 var game_over_menu = {
+    /**
+     * Initialize the game over menu.
+     * @param message_el: jQuery object representing the message you want to put
+     * on the game over menu.
+     */
     init: function(message_el) {
         this.menu = $('#game-over-menu');
         this.menu.find('#choice-buttons').before(message_el);
@@ -286,6 +312,10 @@ var game_over_menu = {
         this.reset_button.on(CLICK, this.reset);
     },
 
+    /**
+     * Resets the game back to the beginning.  Initializes the
+     * start menu and hides the game_over menu.
+     */
     reset: function() {
         game_over_menu.reset_button.off(CLICK, game_over_menu.reset);
         game_over_menu.menu.find('#message').remove();
@@ -353,9 +383,11 @@ var start_menu = {
 
     /**
      * Mark that the user has selected set_button and deselect other_button
-     * if it has been clicked.  Enable first_button and second_button.
+     * if it has been clicked.  Enable first_button and second_button click
+     * handlers.  Set start_menu.user_char to the given shape.
      * @param set_button - The player shape button that was clicked.
      * @param other_button - The other player shape button.
+     * @param shape - the shape that the user selected.
      */
      set_user_char: function(set_button, other_button, shape) {
         start_menu.user_char = shape;
@@ -374,6 +406,7 @@ var start_menu = {
     /**
      * Hide the start menu and initialize the board with the player's
      * chosen shape and whether they want to go first or not.
+     * Turns off all of the start menu click handlers.
      */
     initialize_game: function () {
         if(start_menu.user_char == SHAPE_O || start_menu.user_char == SHAPE_X) {
