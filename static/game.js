@@ -21,6 +21,34 @@ var SHAPE_O = 'O'
 
 var SPINNER = '<div class="spinner"></div>';
 
+var DISABLED_CLASS = 'disabled';
+var HIDE_MENU_CLASS = 'hide_menu';
+var RED_BUTTON_CLASS = 'button-flat-caution';
+var WHITE_BUTTON_CLASS = 'button-flat';
+var MOUSED_OVER_CLASS = 'moused_over';
+
+var CLICK = 'click';
+var MOUSE_ENTER = 'mouseenter';
+var MOUSE_LEAVE = 'mouseleave';
+
+var CANVAS_ID = 'tic_tac_toe_box_';
+
+/**
+ * Object used to represent the game board.
+ * @type {{init: Function,
+ * draw_X: Function,
+ * draw_O: Function,
+ * draw_shape: Function,
+ * mouse_over_box: Function,
+ * mouse_leave_box: Function,
+ * box_clicked: Function,
+ * computer_turn: Function,
+ * ajax_success: Function,
+ * ajax_before_send: Function,
+ * ajax_complete: Function,
+ * ajax_error: Function,
+ * game_over: Function}}
+ */
 var board = {
     /**
      * Initialize the tic-tac-toe board.
@@ -31,10 +59,13 @@ var board = {
     init: function(player_shape, play_first) {
         //initialize board state
         this.game_board = new Array();
+        this.board_elements  = $('.game_board');
         for(var i = 0; i < 9; i++) {
             this.game_board[i] = 0;
+            var context = $('#' +  CANVAS_ID + i)[0].getContext('2d');
+            context.clearRect(0, 0, 125, 125);
         };
-        this.play_first = play_first;
+        //initialize the player shapes
         this.player_shape = player_shape;
         if(player_shape == SHAPE_X) {
             this.computer_shape = SHAPE_O;
@@ -42,14 +73,14 @@ var board = {
         else {
             this.computer_shape = SHAPE_X;
         }
-        this.can_click = this.play_first;
         //set up event handlers
-        $('.game_board').on('mouseenter', 'canvas', this.mouse_over_box);
-        $('.game_board').on('mouseleave', 'canvas', this.mouse_leave_box);
-        $('.game_board').on('click', 'canvas', this.box_clicked);
-        $('#reset-button').on('click', function () { location.reload(); });
+        this.board_elements.on(MOUSE_LEAVE, 'canvas', this.mouse_leave_box);
+        if(play_first) {
+            this.board_elements.on(MOUSE_ENTER, 'canvas', this.mouse_over_box);
+            this.board_elements.on(CLICK, 'canvas', this.box_clicked);
+        }
         // get the computer's move if the player is going second
-        if(!this.play_first) {
+        else {
             this.computer_turn();
         }
     },
@@ -106,12 +137,10 @@ var board = {
      * @param event
      */
     mouse_over_box: function (event) {
-        if(board.can_click) {
-            var split_id = event.target.id.split('_');
-            var canvas_num = split_id[split_id.length - 1]
-            if(board.game_board[canvas_num] == ' ') {
-                $(event.target).addClass('moused_over');
-            };
+        var split_id = event.target.id.split('_');
+        var canvas_num = split_id[split_id.length - 1]
+        if(board.game_board[canvas_num] == ' ') {
+            $(event.target).addClass(MOUSED_OVER_CLASS);
         }
     },
 
@@ -121,8 +150,8 @@ var board = {
      * @param event
      */
     mouse_leave_box: function (event) {
-        if($(event.target).hasClass('moused_over')){
-            $(event.target).removeClass('moused_over');
+        if($(event.target).hasClass(MOUSED_OVER_CLASS)){
+            $(event.target).removeClass(MOUSED_OVER_CLASS);
         };
     },
 
@@ -136,18 +165,18 @@ var board = {
      * @param event
      */
     box_clicked: function (event) {
-        if(board.can_click) {
-            board.can_click = false;
-            var split_id = event.target.id.split('_');
-            var canvas_num = split_id[split_id.length - 1]
-            if(board.game_board[canvas_num] == 0){
-                board.draw_shape(board.player_shape, event.target.id)
-                board.game_board[canvas_num] = HUMAN_VALUE;
-                board.computer_turn();
-            }
-            else{
-                alert("Space occupied.  You must construct additional pyl...boxes!");
-            }
+        var split_id = event.target.id.split('_');
+        var canvas_num = split_id[split_id.length - 1]
+        if(board.game_board[canvas_num] == 0){
+            board.board_elements.off(MOUSE_ENTER, 'canvas', board.mouse_over_box);
+            board.board_elements.off(CLICK, 'canvas', board.box_clicked);
+            $(event.target).trigger(MOUSE_LEAVE);
+            board.draw_shape(board.player_shape, event.target.id)
+            board.game_board[canvas_num] = HUMAN_VALUE;
+            board.computer_turn();
+        }
+        else{
+            alert("Space occupied.  You must construct additional pyl...boxes!");
         }
     },
 
@@ -188,10 +217,9 @@ var board = {
         var state = response.game_state;
         var message = response.message;
         if(board.game_board[move] == 0) {
-            var canvas_id = 'tic_tac_toe_box_' + move;
+            var canvas_id = CANVAS_ID + move;
             board.draw_shape(board.computer_shape, canvas_id);
             board.game_board[move] = CPU_VALUE;
-            board.can_click = true;
         }
         else if (state == ONGOING) {
             state = ERROR;
@@ -199,7 +227,10 @@ var board = {
         if (state != ONGOING) {
             board.game_over(state, message);
         }
-
+        else{
+            board.board_elements.on(MOUSE_ENTER, 'canvas', board.mouse_over_box);
+            board.board_elements.on(CLICK, 'canvas', board.box_clicked);
+        }
     },
 
     /**
@@ -237,102 +268,186 @@ var board = {
      * have one.
      */
     game_over: function(result, m) {
+        board.board_elements.off(MOUSE_ENTER, 'canvas', board.mouse_over_box);
+        board.board_elements.off(CLICK, 'canvas', board.box_clicked);
+        board.board_elements.off(MOUSE_LEAVE, 'canvas', this.mouse_leave_box);
         var message = '';
         switch (result) {
             case ERROR:
-                message = '<h1 class="title">Sorry, there was an error.  ' + m + '</h1>';
+                message = '<h1 id="message" class="title">Sorry, there was an error.  ' + m + '</h1>';
                 break;
             case CATS_GAME:
-                message = '<h1 class="title">Cat\'s Game!</h1>';
+                message = '<h1 id="message" class="title">Cat\'s Game!</h1>';
                 break;
             case USER_WINS:
-                message = '<h1 class="title">You win! ...Oops.</h1>';
+                message = '<h1 id="message" class="title">You win! ...Oops.</h1>';
                 break;
             case CPU_WINS:
-                message = '<h1 class="title">Benevolent machine overlords win! ...Sorry.</h1>';
+                message = '<h1 id="message" class="title">Benevolent machine overlords win! ...Sorry.</h1>';
                 break;
             default:
-                message = '<h1 class="title">Bad response ' + result + '</h1>';
+                message = '<h1 id="message" class="title">Bad response ' + result + '</h1>';
                 break;
         };
-        var game_over_menu = $('#game-over-menu');
-        game_over_menu.find('#choice-buttons').before($(message));
-        game_over_menu.removeClass('hide_menu');
+        game_over_menu.init($(message));
     }
 };
-var user_first;
-var user_char;
 
-$(document).ready(function() {
-    user_char = ' ';
+/**
+ * Object that represents the game over board.  Displays the
+ * game over message and has a button to restart the game.
+ * @type {{init: Function, reset: Function}}
+ */
+var game_over_menu = {
+    /**
+     * Initialize the game over menu.
+     * @param message_el: jQuery object representing the message you want to put
+     * on the game over menu.
+     */
+    init: function(message_el) {
+        this.menu = $('#game-over-menu');
+        this.menu.find('#choice-buttons').before(message_el);
+        this.menu.removeClass(HIDE_MENU_CLASS);
+        this.reset_button = $('#reset-button');
+        this.reset_button.on(CLICK, this.reset);
+    },
+
+    /**
+     * Resets the game back to the beginning.  Initializes the
+     * start menu and hides the game_over menu.
+     */
+    reset: function() {
+        game_over_menu.reset_button.off(CLICK, game_over_menu.reset);
+        game_over_menu.menu.find('#message').remove();
+        game_over_menu.menu.addClass(HIDE_MENU_CLASS);
+        start_menu.init();
+    }
+};
+
+var start_menu = {
+    /**
+     * initialize the start menu and all of its components.
+     */
+    init: function() {
+        this.user_char = ' '
+        this.user_first = false;
+
+        //Set up the go first/second buttons
+        this.first_button =  $('#first_button');
+        this.second_button = $('#second_button');
+        if(!this.first_button.hasClass(DISABLED_CLASS)) {
+            this.first_button.addClass(DISABLED_CLASS);
+        }
+        if(!this.second_button.hasClass(DISABLED_CLASS)) {
+            this.second_button.addClass(DISABLED_CLASS);
+        }
+        this.first_button.off(CLICK);
+        this.second_button.off(CLICK);
+
+        //Set up the select O/X buttons
+        this.o_button = $('#O_button');
+        this.x_button = $('#X_button');
+        if(this.o_button.hasClass(RED_BUTTON_CLASS)) {
+          this.o_button.removeClass(RED_BUTTON_CLASS);
+          this.o_button.addClass(WHITE_BUTTON_CLASS);
+        }
+        if(this.x_button.hasClass(RED_BUTTON_CLASS)) {
+          this.x_button.removeClass(RED_BUTTON_CLASS);
+          this.x_button.addClass(WHITE_BUTTON_CLASS);
+        }
+
+        //Set up start menu
+        this.menu = $('#start-menu');
+        if(this.menu.hasClass(HIDE_MENU_CLASS)){
+            this.menu.removeClass(HIDE_MENU_CLASS);
+        }
+
+        //Set up click handlers
+        this.o_button.on(CLICK, this.o_click_handler);
+        this.x_button.on(CLICK, this.x_click_handler);
+    },
+
+    /**
+     * Click handler for the select X button.
+     */
+    x_click_handler: function() {
+        start_menu.set_user_char(start_menu.x_button, start_menu.o_button, start_menu.o_click_handler, SHAPE_X);
+    },
+
+    /**
+     * Click handler for the select O button.
+     */
+    o_click_handler: function() {
+        start_menu.set_user_char(start_menu.o_button, start_menu.x_button, start_menu.x_click_handler, SHAPE_O);
+    },
+
+    /**
+     * Mark that the user has selected set_button and deselect other_button
+     * if it has been clicked.  Enable first_button and second_button click
+     * handlers.  Set start_menu.user_char to the given shape.
+     * @param set_button - The player shape button that was clicked.
+     * @param other_button - The other player shape button.
+     * @param other_handler - handler function for the click event on other_button.
+     * @param shape - the shape that the user selected.
+     */
+     set_user_char: function(set_button, other_button, other_handler, shape) {
+        start_menu.user_char = shape;
+        if(other_button.hasClass(RED_BUTTON_CLASS)) {
+            other_button.removeClass(RED_BUTTON_CLASS);
+            other_button.addClass(WHITE_BUTTON_CLASS);
+            other_button.on(CLICK, other_handler)
+        }
+        set_button.removeClass(WHITE_BUTTON_CLASS)
+        set_button.addClass(RED_BUTTON_CLASS);
+        set_button.off(CLICK);
+
+        if(start_menu.first_button.hasClass(DISABLED_CLASS)) {
+            start_menu.first_button.removeClass(DISABLED_CLASS);
+            start_menu.first_button.on(CLICK, start_menu.first_click_handler);
+        }
+        if(start_menu.second_button.hasClass(DISABLED_CLASS)) {
+            start_menu.second_button.removeClass(DISABLED_CLASS);
+            start_menu.second_button.on(CLICK, start_menu.second_click_handler);
+        }
+    },
 
     /**
      * Hide the start menu and initialize the board with the player's
      * chosen shape and whether they want to go first or not.
+     * Turns off all of the start menu click handlers.
      */
-    function initialize() {
-        $('#start-menu').addClass('hide_menu');
-        board.init(user_char, user_first);
-    };
-
-    /**
-     * Mark that the user has selected set_button and deselect other_button
-     * if it has been clicked.  Enable first_button and second_button.
-     * @param set_button - The player shape button that was clicked.
-     * @param other_button - The other player shape button.
-     */
-    function set_user_char(set_button, other_button) {
-        if(other_button.hasClass('button-flat-caution')) {
-          other_button.removeClass('button-flat-caution');
-          other_button.addClass('button-flat');
-        };
-        set_button.removeClass('button-flat')
-        set_button.addClass('button-flat-caution');
-        $('#first_button').removeClass('disabled');
-        $('#second_button').removeClass('disabled');
-    };
+    initialize_game: function () {
+        if(start_menu.user_char == SHAPE_O || start_menu.user_char == SHAPE_X) {
+            start_menu.first_button.off(CLICK,start_menu.first_click_handler);
+            start_menu.second_button.off(CLICK, start_menu.second_click_handler);
+            start_menu.o_button.off(CLICK, start_menu.o_click_handler);
+            start_menu.x_button.off(CLICK, start_menu.x_click_handler);
+            start_menu.menu.addClass(HIDE_MENU_CLASS);
+            board.init(start_menu.user_char, start_menu.user_first);
+        }
+    },
 
     /**
      * Click handler for the button a user pushes to choose to go first.
      * Only works after they have selected a shape.  When it is clicked,
      * it will disable itself and second_button and start the game.
      */
-    $('#first_button').on('click', function () {
-        if(!$(this).hasClass('disabled')){
-            user_first = true;
-            $(this).addClass('disabled');
-            $('#second_button').addClass('disabled');
-            initialize();
-        };
-    });
+    first_click_handler: function () {
+        start_menu.user_first = true;
+        start_menu.initialize_game();
+    },
 
     /**
      * Click handler for the button a user pushes to choose to go second.
      * Only works after they have selected a shape.  When it is clicked,
      * it will disable itself and first_button and start the game.
      */
-    $('#second_button').on('click', function () {
-        if(!$(this).hasClass('disabled')){
-            user_first = false;
-            $(this).addClass('disabled');
-            $('#first_button').addClass('disabled');
-            initialize();
-        };
-    });
+    second_click_handler: function () {
+        start_menu.user_first = false;
+        start_menu.initialize_game();
+    }
+}
 
-    /**
-     * Click handler for the select O button.
-     */
-    $('#O_button').on('click', function () {
-        user_char = SHAPE_O;
-        set_user_char($(this), $('#X_button'));
-    });
-
-    /**
-     * Click handler for the select X button.
-     */
-    $('#X_button').on('click', function () {
-        user_char = SHAPE_X;
-        set_user_char($(this), $('#O_button'));
-    });
+$(document).ready(function() {
+    start_menu.init();
 });

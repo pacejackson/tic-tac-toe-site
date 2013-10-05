@@ -24,7 +24,6 @@ def get_next_move(board, player):
     player - the player you want to find the next move for.
     """
     key = str('BOARDS_%s_%s' % (str(board), player))
-    print key
     move = memcache.get(key)
     if move is None:
         move = get_move(board, player)
