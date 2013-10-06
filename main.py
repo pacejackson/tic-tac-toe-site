@@ -15,11 +15,7 @@
 # limitations under the License.
 #
 import webapp2
-from handlers.gamehandler import GameHandler
-from handlers.tictactoeapihandler import TicTacToeAPIHandler
-class MainHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.write('Hello world!')
+from handlers import GameHandler, TicTacToeAPIHandler
 
 app = webapp2.WSGIApplication([
     ('/', GameHandler),
