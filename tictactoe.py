@@ -199,13 +199,11 @@ def evaluate(board, player):
 
 def evaluate_line(board, player, index1, index2, index3):
     """
-    Evaluates a line in board given by x1, y1, x2, y2, x3, y3
+    Evaluates a line in board given by index1, index2, index3
     for the provided player.  Returns a score for that line assuming
     player is the max player and get_opponent(player) is the min player.
     You can see more details at the sites where I researched this
     algorithm.
-
-    ___TODO___: see if you can find a better heuristic for this.
 
     board - the tic-tac-toe board you want to evaluate.
     player - the max player you are scoring the line for
@@ -216,12 +214,14 @@ def evaluate_line(board, player, index1, index2, index3):
     opponent = utils.get_opponent(player)
 
     state_1 = board[index1]
+    state_2 = board[index2]
+    state_3 = board[index3]
+
     if state_1 == player:
         score = 1
     elif state_1 == opponent:
         score = -1
 
-    state_2 = board[index2]
     if state_2 == player:
         if score == 1:
             score = 10
@@ -237,7 +237,6 @@ def evaluate_line(board, player, index1, index2, index3):
         else:
             score = -1
 
-    state_3 = board[index3]
     if state_3 == player:
         if score > 0:
             score *= 10

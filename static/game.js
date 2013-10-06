@@ -234,25 +234,25 @@ var board = {
         board.board_elements.off(MOUSE_ENTER, 'canvas', board.mouse_over_box);
         board.board_elements.off(CLICK, 'canvas', board.box_clicked);
         board.board_elements.off(MOUSE_LEAVE, 'canvas', this.mouse_leave_box);
-        var message = '';
+        var message = $('<h1 id="message" class="title"></h1>');
         switch (result) {
             case ERROR:
-                message = '<h1 id="message" class="title">Sorry, there was an error.  ' + m + '</h1>';
+                message.html("Sorry, there was an error.  " + m );
                 break;
             case CATS_GAME:
-                message = '<h1 id="message" class="title">Cat\'s Game!</h1>';
+                message.html("Cat's Game!");
                 break;
             case USER_WINS:
-                message = '<h1 id="message" class="title">You win! ...Oops.</h1>';
+                message.html("You win! ...Oops.");
                 break;
             case CPU_WINS:
-                message = '<h1 id="message" class="title">Benevolent machine overlords win! ...Sorry.</h1>';
+                message.html("Benevolent machine overlords win! ...Sorry.");
                 break;
             default:
-                message = '<h1 id="message" class="title">Bad response ' + result + '</h1>';
+                message.html("Bad response " + result);
                 break;
         };
-        game_over_menu.init($(message));
+        game_over_menu.init(message);
     }
 };
 
@@ -295,39 +295,17 @@ var start_menu = {
         this.user_char = ' '
         this.user_first = false;
 
-        //Set up the go first/second buttons
         this.first_button =  $('#first_button');
         this.second_button = $('#second_button');
-        if(!this.first_button.hasClass(DISABLED_CLASS)) {
-            this.first_button.addClass(DISABLED_CLASS);
-        }
-        if(!this.second_button.hasClass(DISABLED_CLASS)) {
-            this.second_button.addClass(DISABLED_CLASS);
-        }
-        this.first_button.off(CLICK);
-        this.second_button.off(CLICK);
-
-        //Set up the select O/X buttons
         this.o_button = $('#O_button');
         this.x_button = $('#X_button');
-        if(this.o_button.hasClass(RED_BUTTON_CLASS)) {
-          this.o_button.removeClass(RED_BUTTON_CLASS);
-          this.o_button.addClass(WHITE_BUTTON_CLASS);
-        }
-        if(this.x_button.hasClass(RED_BUTTON_CLASS)) {
-          this.x_button.removeClass(RED_BUTTON_CLASS);
-          this.x_button.addClass(WHITE_BUTTON_CLASS);
-        }
-
-        //Set up start menu
         this.menu = $('#start-menu');
-        if(this.menu.hasClass(HIDE_MENU_CLASS)){
-            this.menu.removeClass(HIDE_MENU_CLASS);
-        }
 
-        //Set up click handlers
-        this.o_button.on(CLICK, this.o_click_handler);
-        this.x_button.on(CLICK, this.x_click_handler);
+        this.unhighlight_button(this.o_button);
+        this.unhighlight_button(this.x_button);
+        this.enable_button(this.o_button, this.o_click_handler);
+        this.enable_button(this.x_button, this.x_click_handler);
+        this.show_menu();
     },
 
     /**
@@ -355,23 +333,55 @@ var start_menu = {
      */
      set_user_char: function(set_button, other_button, other_handler, shape) {
         start_menu.user_char = shape;
-        if(other_button.hasClass(RED_BUTTON_CLASS)) {
-            other_button.removeClass(RED_BUTTON_CLASS);
-            other_button.addClass(WHITE_BUTTON_CLASS);
+        if(start_menu.unhighlight_button(other_button)) {
             other_button.on(CLICK, other_handler)
         }
-        set_button.removeClass(WHITE_BUTTON_CLASS)
-        set_button.addClass(RED_BUTTON_CLASS);
-        set_button.off(CLICK);
-
+        if(start_menu.highlight_button(set_button)) {
+            set_button.off(CLICK);
+        }
         start_menu.enable_button(start_menu.first_button, start_menu.first_click_handler);
         start_menu.enable_button(start_menu.second_button, start_menu.second_click_handler);
+    },
+
+    highlight_button: function(button) {
+        if(button.hasClass(WHITE_BUTTON_CLASS)) {
+            button.removeClass(WHITE_BUTTON_CLASS);
+            button.addClass(RED_BUTTON_CLASS);
+            return true;
+        }
+        return false
+    },
+
+    unhighlight_button: function(button) {
+        if(button.hasClass(RED_BUTTON_CLASS)) {
+            button.removeClass(RED_BUTTON_CLASS);
+            button.addClass(WHITE_BUTTON_CLASS);
+            return true;
+        }
+        return false;
     },
 
     enable_button: function(button, handler) {
         if(button.hasClass(DISABLED_CLASS)) {
             button.removeClass(DISABLED_CLASS);
             button.on(CLICK, handler);
+            return true;
+        }
+        return false;
+    },
+
+    disable_button: function(button, handler) {
+        if(!button.hasClass(DISABLED_CLASS)) {
+            button.addClass(DISABLED_CLASS);
+            button.off(CLICK, handler);
+            return true;
+        }
+        return false;
+    },
+
+    show_menu: function() {
+        if(start_menu.menu.hasClass(HIDE_MENU_CLASS)){
+            start_menu.menu.removeClass(HIDE_MENU_CLASS);
         }
     },
 
@@ -382,10 +392,10 @@ var start_menu = {
      */
     initialize_game: function () {
         if(start_menu.user_char == SHAPE_O || start_menu.user_char == SHAPE_X) {
-            start_menu.first_button.off(CLICK,start_menu.first_click_handler);
-            start_menu.second_button.off(CLICK, start_menu.second_click_handler);
-            start_menu.o_button.off(CLICK, start_menu.o_click_handler);
-            start_menu.x_button.off(CLICK, start_menu.x_click_handler);
+            start_menu.disable_button(start_menu.first_button, start_menu.first_click_handler);
+            start_menu.disable_button(start_menu.second_button, start_menu.second_click_handler);
+            start_menu.disable_button(start_menu.o_button, start_menu.o_click_handler);
+            start_menu.disable_button(start_menu.x_button, start_menu.x_click_handler);
             start_menu.menu.addClass(HIDE_MENU_CLASS);
             board.init(start_menu.user_char, start_menu.user_first);
         }
