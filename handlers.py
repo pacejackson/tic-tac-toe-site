@@ -1,9 +1,10 @@
 __author__ = 'andrewpboyle'
 import webapp2
-import utils
 import json
 import config
+import utils
 import tictactoe
+import logging
 
 
 class Handler(webapp2.RequestHandler):
@@ -15,6 +16,10 @@ class Handler(webapp2.RequestHandler):
 
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
+
+    def render_str(self, template, **params):
+        t = utils.jinja_environment.get_template(template)
+        return t.render(params)
 
     def render_json(self, values):
         """
@@ -45,7 +50,7 @@ class TicTacToeAPIHandler(Handler):
     represents spots used by the human player, and 0 represents an empty
     spot.  It will return the response as JSON with the following properties:
 
-    next_move_1d: index of a 1d, row-major representation of the tic-tac-toe
+    next_move: index of a 1d, row-major representation of the tic-tac-toe
     board where you will place the computer's next move.
     game_state: The state of the game.  It will be either 'error', 'cats_game',
     'cpu_wins', 'user_wins', or 'ongoing'.
@@ -54,17 +59,17 @@ class TicTacToeAPIHandler(Handler):
     """
     def get(self):
         board = utils.string_to_list(self.request.get('board'))
+        next_move = -1
         # check if they sent you a full board, this will happen if the player went first.
         if tictactoe.is_full_board(board):
             # if they did, just check the game state.
-            next_move_1d = -1
             game_state, message = tictactoe.get_game_state(board)
         else:
             try:
-                next_move_1d = tictactoe.get_move(board, config.COMPUTER)
-                new_board = tictactoe.make_move(board, next_move_1d, config.COMPUTER)
+                next_move = tictactoe.get_move(board, config.COMPUTER)
+                new_board = tictactoe.make_move(board, next_move, config.COMPUTER)
                 game_state, message = tictactoe.get_game_state(new_board)
             except Exception as e:
                 game_state, message = config.ERROR, e.message
-        result = {'move_1d': next_move_1d, 'game_state': game_state, 'message': message}
+        result = {'move': next_move, 'game_state': game_state, 'message': message}
         self.render_json(result)

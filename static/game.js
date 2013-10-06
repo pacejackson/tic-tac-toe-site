@@ -192,7 +192,7 @@ var board = {
            beforeSend: function() { $('#start-menu').before($(SPINNER)); },
            complete: function() {  $('.spinner').remove(); },
            success: function(response) {
-                        var move = response.move_1d;
+                        var move = response.move;
                         var state = response.game_state;
                         var message = response.message;
                         if(board.game_board[move] == 0) {
@@ -364,13 +364,14 @@ var start_menu = {
         set_button.addClass(RED_BUTTON_CLASS);
         set_button.off(CLICK);
 
-        if(start_menu.first_button.hasClass(DISABLED_CLASS)) {
-            start_menu.first_button.removeClass(DISABLED_CLASS);
-            start_menu.first_button.on(CLICK, start_menu.first_click_handler);
-        }
-        if(start_menu.second_button.hasClass(DISABLED_CLASS)) {
-            start_menu.second_button.removeClass(DISABLED_CLASS);
-            start_menu.second_button.on(CLICK, start_menu.second_click_handler);
+        start_menu.enable_button(start_menu.first_button, start_menu.first_click_handler);
+        start_menu.enable_button(start_menu.second_button, start_menu.second_click_handler);
+    },
+
+    enable_button: function(button, handler) {
+        if(button.hasClass(DISABLED_CLASS)) {
+            button.removeClass(DISABLED_CLASS);
+            button.on(CLICK, handler);
         }
     },
 

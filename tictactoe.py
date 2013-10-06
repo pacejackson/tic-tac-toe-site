@@ -2,6 +2,7 @@ __author__ = 'andrewpboyle'
 import config
 import copy
 import utils
+import logging
 from collections import namedtuple
 
 
@@ -19,14 +20,15 @@ def is_full_board(board):
     """
     Returns True if the board is full.  i.e. there are no empty spaces.
     """
-    return 0 not in board
+    return config.NO_PLAYER not in board
 
 
 def is_valid_board(board):
     """
     Returns True if the board is valid.  The board is considered valid if the sum of
-    all values in the board, sum, is such that -1 <= sum <= 1 and the only values in
-    the board are config.COMPUTER, config.HUMAN, and config.NO_PLAYER.
+    all values in the board, sum, is such that -1 <= sum <= 1, the only values in
+    the board are config.COMPUTER, config.HUMAN, and config.NO_PLAYER, and the length
+    of the board is 9.
 
     board - the board state you want to check.
     """
@@ -61,8 +63,7 @@ def get_all_moves(board, player):
     player - the player you are getting moves for.
     """
     moves = []
-    if not (is_full_board(board) or
-            player_has_won(board, player) or
+    if not (player_has_won(board, player) or
             player_has_won(board, utils.get_opponent(player)) or
             (not is_valid_board(board))):
         for index in range(9):
@@ -127,8 +128,8 @@ def get_move(board, player):
     player - the (int) value of the player looking to get the best move possible.
     """
     #optimization to always pick the top-left corner on an empty board
-    if set(board) == set(config.NO_PLAYER):
-        return 0, 0
+    if set(board) == set([config.NO_PLAYER]):
+        return 0
     result = minimax(board, player, 2, config.NEG_INF, config.INF)
     return result.index
 
@@ -158,7 +159,7 @@ def minimax(board, player, depth, alpha, beta):
     moves = get_all_moves(board, player)
     opponent = utils.get_opponent(player)
     if moves == [] or depth == 0:
-        return minimax_result(score=evaluate(board, config.computer), index=best_index)
+        return minimax_result(score=evaluate(board, config.COMPUTER), index=best_index)
     else:
         for move in moves:
             new_board = make_move(board, move, player)
@@ -171,7 +172,7 @@ def minimax(board, player, depth, alpha, beta):
                     best_index = move
             if alpha >= beta:
                 break
-    best_score = alpha if player == config.computer else beta
+    best_score = alpha if player == config.COMPUTER else beta
     return minimax_result(score=best_score, index=best_index)
 
 
@@ -183,7 +184,7 @@ def evaluate(board, player):
     player - the player who you are trying to find the best play for.
     """
     score = 0
-    for i in range(2):
+    for i in range(3):
         col = i
         row = i * 3
         #evaluate rows

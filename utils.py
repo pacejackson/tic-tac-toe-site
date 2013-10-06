@@ -29,5 +29,5 @@ def string_to_list(list_as_string):
     """
     #remove whitespace and slice off the '[' ']' characters.
     list_as_string = list_as_string.replace(' ', '')[1:-1]
-    split_string = list_as_string.split(',');
+    split_string = list_as_string.split(',')
     return [int(x) for x in split_string]
