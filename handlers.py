@@ -54,12 +54,10 @@ class TicTacToeAPIHandler(Handler):
     """
     def get(self):
         board = utils.string_to_list(self.request.get('board'))
-        game_state = config.ONGOING
-        message = 'Ongoing.'
-        next_move_1d = -1
         # check if they sent you a full board, this will happen if the player went first.
         if tictactoe.is_full_board(board):
             # if they did, just check the game state.
+            next_move_1d = -1
             game_state, message = tictactoe.get_game_state(board)
         else:
             try:

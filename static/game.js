@@ -43,10 +43,6 @@ var CANVAS_ID = 'tic_tac_toe_box_';
  * mouse_leave_box: Function,
  * box_clicked: Function,
  * computer_turn: Function,
- * ajax_success: Function,
- * ajax_before_send: Function,
- * ajax_complete: Function,
- * ajax_error: Function,
  * game_over: Function}}
  */
 var board = {
@@ -193,66 +189,33 @@ var board = {
            dataType: 'json',
            contentType: 'application/json',
            timeout: 3000,
-           beforeSend: board.ajax_before_send,
-           success: board.ajax_success,
-           error: board.ajax_error,
-           complete: board.ajax_complete
+           beforeSend: function() { $('#start-menu').before($(SPINNER)); },
+           complete: function() {  $('.spinner').remove(); },
+           success: function(response) {
+                        var move = response.move_1d;
+                        var state = response.game_state;
+                        var message = response.message;
+                        if(board.game_board[move] == 0) {
+                            var canvas_id = CANVAS_ID + move;
+                            board.draw_shape(board.computer_shape, canvas_id);
+                            board.game_board[move] = CPU_VALUE;
+                        }
+                        else if (state == ONGOING) {
+                            state = ERROR;
+                        }
+                        if (state != ONGOING) {
+                            board.game_over(state, message);
+                        }
+                        else{
+                            board.board_elements.on(MOUSE_ENTER, 'canvas', board.mouse_over_box);
+                            board.board_elements.on(CLICK, 'canvas', board.box_clicked);
+                        }
+                    },
+           error: function() {
+                      board.game_over(ERROR, 'There was an error running the AJAX request.');
+                  }
         });
 
-    },
-
-    /**
-     * Runs when the ajax call to the API completes successfully.  Gets
-     * the results from the call and updates the game accordingly.
-     * @param response - the response from the ajax call to the API.  Should
-     * have a move_1d paramater, specifying the 1d index of the row-major
-     * representation of the tic-tac-toe board where the computer is making
-     * it's move.  It should also have a game_state paramater to let us know
-     * if the game is over or if there was an error.  We also expect a
-     * message parameter that lets the API pass us extra information about the
-     * board state or any errors.
-     */
-    ajax_success: function(response) {
-        var move = response.move_1d;
-        var state = response.game_state;
-        var message = response.message;
-        if(board.game_board[move] == 0) {
-            var canvas_id = CANVAS_ID + move;
-            board.draw_shape(board.computer_shape, canvas_id);
-            board.game_board[move] = CPU_VALUE;
-        }
-        else if (state == ONGOING) {
-            state = ERROR;
-        }
-        if (state != ONGOING) {
-            board.game_over(state, message);
-        }
-        else{
-            board.board_elements.on(MOUSE_ENTER, 'canvas', board.mouse_over_box);
-            board.board_elements.on(CLICK, 'canvas', board.box_clicked);
-        }
-    },
-
-    /**
-     * Starts the CSS spinner before the ajax call is sent.
-     */
-    ajax_before_send: function() {
-        $('#start-menu').before($(SPINNER));
-    },
-
-    /**
-     * Removes the CSS spinner once the ajax call is completed.
-     */
-    ajax_complete: function() {
-        $('.spinner').remove();
-    },
-
-    /**
-     * ajax error handler.  Ends the game with an error message when it is
-     * called.
-     */
-    ajax_error: function() {
-        board.game_over(ERROR, 'There was an error running the AJAX request.');
     },
 
     /**
