@@ -1,11 +1,11 @@
 __author__ = 'andrewpboyle'
 import webapp2
 import json
+import os
+import jinja2
 import config
 import utils
 import tictactoe
-import os
-import jinja2
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
