@@ -16,8 +16,8 @@ var CATS_GAME = 'cats_game';
 var CPU_VALUE   = -1;
 var HUMAN_VALUE = 1;
 
-var SHAPE_X = 'X'
-var SHAPE_O = 'O'
+var SHAPE_X = 'X';
+var SHAPE_O = 'O';
 
 var SPINNER = '<div class="spinner"></div>';
 
@@ -30,6 +30,7 @@ var MOUSED_OVER_CLASS = 'moused_over';
 var CLICK = 'click';
 var MOUSE_ENTER = 'mouseenter';
 var MOUSE_LEAVE = 'mouseleave';
+var CANVAS = 'canvas';
 
 var CANVAS_ID = 'tic_tac_toe_box_';
 
@@ -46,7 +47,7 @@ var start_menu = {
      * initialize the start menu and all of its components.
      */
     init: function() {
-        this.user_char = ' '
+        this.user_char = ' ';
 
         this.first_button =  $('#first_button');
         this.second_button = $('#second_button');
@@ -89,7 +90,7 @@ var start_menu = {
      set_user_char: function(set_button, other_button, other_handler, shape) {
         start_menu.user_char = shape;
         if(start_menu.unhighlight_button(other_button)) {
-            other_button.on(CLICK, other_handler)
+            other_button.on(CLICK, other_handler);
         }
         if(start_menu.highlight_button(set_button)) {
             set_button.off(CLICK);
@@ -98,22 +99,21 @@ var start_menu = {
         start_menu.enable_button(start_menu.second_button, start_menu.second_click_handler);
     },
 
-    highlight_button: function(button) {
-        if(button.hasClass(WHITE_BUTTON_CLASS)) {
-            button.removeClass(WHITE_BUTTON_CLASS);
-            button.addClass(RED_BUTTON_CLASS);
-            return true;
-        }
-        return false
-    },
-
-    unhighlight_button: function(button) {
-        if(button.hasClass(RED_BUTTON_CLASS)) {
-            button.removeClass(RED_BUTTON_CLASS);
-            button.addClass(WHITE_BUTTON_CLASS);
+    change_button_class: function(button, remove_class, add_class) {
+        if(button.hasClass(remove_class)) {
+            button.removeClass(remove_class);
+            button.addClass(add_class);
             return true;
         }
         return false;
+    },
+
+    highlight_button: function(button) {
+        return start_menu.change_button_class(button, WHITE_BUTTON_CLASS, RED_BUTTON_CLASS)
+    },
+
+    unhighlight_button: function(button) {
+        return start_menu.change_button_class(button, RED_BUTTON_CLASS, WHITE_BUTTON_CLASS)
     },
 
     enable_button: function(button, handler) {
@@ -206,7 +206,7 @@ var board = {
             this.computer_shape = SHAPE_X;
         }
         //set up event handlers
-        this.board_elements.on(MOUSE_LEAVE, 'canvas', this.mouse_leave_box);
+        this.board_elements.on(MOUSE_LEAVE, CANVAS, this.mouse_leave_box);
         if(play_first) {
             this.enable_user_interaction();
         }
@@ -297,11 +297,11 @@ var board = {
      */
     box_clicked: function (event) {
         var split_id = event.target.id.split('_');
-        var canvas_num = split_id[split_id.length - 1]
+        var canvas_num = split_id[split_id.length - 1];
         if(board.game_board[canvas_num] == 0){
-            board.disable_user_interaction()
+            board.disable_user_interaction();
             $(event.target).trigger(MOUSE_LEAVE);
-            board.draw_shape(board.player_shape, event.target.id)
+            board.draw_shape(board.player_shape, event.target.id);
             board.game_board[canvas_num] = HUMAN_VALUE;
             board.computer_turn();
         }
@@ -311,13 +311,13 @@ var board = {
     },
 
     disable_user_interaction: function() {
-        board.board_elements.off(MOUSE_ENTER, 'canvas', board.mouse_over_box);
-        board.board_elements.off(CLICK, 'canvas', board.box_clicked);
+        board.board_elements.off(MOUSE_ENTER, CANVAS, board.mouse_over_box);
+        board.board_elements.off(CLICK, CANVAS, board.box_clicked);
     },
 
     enable_user_interaction: function() {
-        board.board_elements.on(MOUSE_ENTER, 'canvas', board.mouse_over_box);
-        board.board_elements.on(CLICK, 'canvas', board.box_clicked);
+        board.board_elements.on(MOUSE_ENTER, CANVAS, board.mouse_over_box);
+        board.board_elements.on(CLICK, CANVAS, board.box_clicked);
     },
 
     /**
@@ -375,7 +375,7 @@ var board = {
      */
     game_over: function(result, m) {
         board.disable_user_interaction();
-        board.board_elements.off(MOUSE_LEAVE, 'canvas', this.mouse_leave_box);
+        board.board_elements.off(MOUSE_LEAVE, CANVAS, this.mouse_leave_box);
         var message = $('<h1 id="message" class="title"></h1>');
         switch (result) {
             case ERROR:

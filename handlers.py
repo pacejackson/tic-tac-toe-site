@@ -13,6 +13,7 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(template_dir))
 
+
 class Handler(webapp2.RequestHandler):
     """
     Base handler class.  Provides some convenience write and render methods.
