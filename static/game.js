@@ -269,7 +269,8 @@ var game_over_menu = {
      */
     init: function(message_el) {
         this.menu = $('#game-over-menu');
-        this.menu.find('#choice-buttons').before(message_el);
+        this.message = message_el;
+        this.menu.find('#choice-buttons').before(this.message);
         this.menu.removeClass(HIDE_MENU_CLASS);
         this.reset_button = $('#reset-button');
         this.reset_button.on(CLICK, this.reset);
@@ -281,7 +282,7 @@ var game_over_menu = {
      */
     reset: function() {
         game_over_menu.reset_button.off(CLICK, game_over_menu.reset);
-        game_over_menu.menu.find('#message').remove();
+        game_over_menu.message.remove();
         game_over_menu.menu.addClass(HIDE_MENU_CLASS);
         start_menu.init();
     }
@@ -293,7 +294,6 @@ var start_menu = {
      */
     init: function() {
         this.user_char = ' '
-        this.user_first = false;
 
         this.first_button =  $('#first_button');
         this.second_button = $('#second_button');
@@ -305,7 +305,9 @@ var start_menu = {
         this.unhighlight_button(this.x_button);
         this.enable_button(this.o_button, this.o_click_handler);
         this.enable_button(this.x_button, this.x_click_handler);
-        this.show_menu();
+        if(this.menu.hasClass(HIDE_MENU_CLASS)){
+            this.menu.removeClass(HIDE_MENU_CLASS);
+        }
     },
 
     /**
@@ -379,25 +381,19 @@ var start_menu = {
         return false;
     },
 
-    show_menu: function() {
-        if(start_menu.menu.hasClass(HIDE_MENU_CLASS)){
-            start_menu.menu.removeClass(HIDE_MENU_CLASS);
-        }
-    },
-
     /**
      * Hide the start menu and initialize the board with the player's
      * chosen shape and whether they want to go first or not.
      * Turns off all of the start menu click handlers.
      */
-    initialize_game: function () {
+    initialize_game: function (user_first) {
         if(start_menu.user_char == SHAPE_O || start_menu.user_char == SHAPE_X) {
             start_menu.disable_button(start_menu.first_button, start_menu.first_click_handler);
             start_menu.disable_button(start_menu.second_button, start_menu.second_click_handler);
             start_menu.disable_button(start_menu.o_button, start_menu.o_click_handler);
             start_menu.disable_button(start_menu.x_button, start_menu.x_click_handler);
             start_menu.menu.addClass(HIDE_MENU_CLASS);
-            board.init(start_menu.user_char, start_menu.user_first);
+            board.init(start_menu.user_char, user_first);
         }
     },
 
@@ -407,8 +403,7 @@ var start_menu = {
      * it will disable itself and second_button and start the game.
      */
     first_click_handler: function () {
-        start_menu.user_first = true;
-        start_menu.initialize_game();
+        start_menu.initialize_game(true);
     },
 
     /**
@@ -417,8 +412,7 @@ var start_menu = {
      * it will disable itself and first_button and start the game.
      */
     second_click_handler: function () {
-        start_menu.user_first = false;
-        start_menu.initialize_game();
+        start_menu.initialize_game(false);
     }
 }
 
