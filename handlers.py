@@ -4,8 +4,14 @@ import json
 import config
 import utils
 import tictactoe
-import logging
+import os
+import jinja2
 
+
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+
+jinja_environment = jinja2.Environment(autoescape=True,
+                                       loader=jinja2.FileSystemLoader(template_dir))
 
 class Handler(webapp2.RequestHandler):
     """
@@ -18,7 +24,7 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
 
     def render_str(self, template, **params):
-        t = utils.jinja_environment.get_template(template)
+        t = jinja_environment.get_template(template)
         return t.render(params)
 
     def render_json(self, values):
@@ -50,7 +56,7 @@ class TicTacToeAPIHandler(Handler):
     represents spots used by the human player, and 0 represents an empty
     spot.  It will return the response as JSON with the following properties:
 
-    next_move: index of a 1d, row-major representation of the tic-tac-toe
+    move: index of a 1d, row-major representation of the tic-tac-toe
     board where you will place the computer's next move.
     game_state: The state of the game.  It will be either 'error', 'cats_game',
     'cpu_wins', 'user_wins', or 'ongoing'.

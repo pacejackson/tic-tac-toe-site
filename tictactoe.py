@@ -2,8 +2,7 @@ __author__ = 'andrewpboyle'
 import config
 import copy
 import utils
-import logging
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 
 minimax_result = namedtuple('minimax_result', ['score', 'index'])
@@ -185,13 +184,9 @@ def evaluate(board, player):
     """
     score = 0
     for i in range(3):
-        col = i
         row = i * 3
-        #evaluate rows
-        score += evaluate_line(board, player, col, col + 3, col + 6)
-        #evaluate columns
+        score += evaluate_line(board, player, i, i + 3, i + 6)
         score += evaluate_line(board, player, row, row + 1, row + 2)
-    #evaluate diagonals
     score += evaluate_line(board, player, 0, 4, 8)
     score += evaluate_line(board, player, 2, 4, 6)
     return score
@@ -210,46 +205,10 @@ def evaluate_line(board, player, index1, index2, index3):
     x1, y1, x2, y2, x3, y3 - 2D points defining the line you want to
     check.
     """
-    score = 0
     opponent = utils.get_opponent(player)
-
-    state_1 = board[index1]
-    state_2 = board[index2]
-    state_3 = board[index3]
-
-    if state_1 == player:
-        score = 1
-    elif state_1 == opponent:
-        score = -1
-
-    if state_2 == player:
-        if score == 1:
-            score = 10
-        elif score == -1:
-            return 0
-        else:
-            score = 1
-    elif state_2 == opponent:
-        if score == -1:
-            score = -10
-        elif score == 1:
-            return 0
-        else:
-            score = -1
-
-    if state_3 == player:
-        if score > 0:
-            score *= 10
-        elif score < 0:
-            return 0
-        else:
-            score = 1
-    elif state_3 == opponent:
-        if score < 0:
-            score *= 10
-        elif score > 1:
-            return 0
-        else:
-            score = -1
-
-    return score
+    line_counts = Counter([board[index1], board[index2], board[index3]])
+    if line_counts[player] > 0 and line_counts[opponent] > 0:
+        return 0
+    if line_counts[opponent] == 0:
+        return int(pow(10, line_counts[player] - 1))
+    return -int(pow(10, line_counts[opponent] - 1))
