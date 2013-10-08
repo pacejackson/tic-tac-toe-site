@@ -1,38 +1,24 @@
-/**
- * Created with PyCharm.
- * User: andrewpboyle
- * Date: 9/24/13
- * Time: 12:14 PM
- * To change this template use File | Settings | File Templates.
- */
 
-
-var ERROR     = 'error';
-var ONGOING   = 'ongoing';
-var CPU_WINS  = 'cpu_wins';
-var USER_WINS = 'user_wins';
-var CATS_GAME = 'cats_game';
-
+var ERROR       = 'error';
+var ONGOING     = 'ongoing';
+var CPU_WINS    = 'cpu_wins';
+var USER_WINS   = 'user_wins';
+var CATS_GAME   = 'cats_game';
 var CPU_VALUE   = -1;
 var HUMAN_VALUE = 1;
-
-var SHAPE_X = 'X';
-var SHAPE_O = 'O';
-
-var SPINNER = '<div class="spinner"></div>';
-
-var DISABLED_CLASS = 'disabled';
-var HIDE_MENU_CLASS = 'hide_menu';
-var RED_BUTTON_CLASS = 'button-flat-caution';
+var SHAPE_X     = 'X';
+var SHAPE_O     = 'O';
+var SPINNER     = '<div class="spinner"></div>';
+var DISABLED_CLASS     = 'disabled';
+var HIDE_MENU_CLASS    = 'hide_menu';
+var RED_BUTTON_CLASS   = 'button-flat-caution';
 var WHITE_BUTTON_CLASS = 'button-flat';
-var MOUSED_OVER_CLASS = 'moused_over';
-
-var CLICK = 'click';
+var MOUSED_OVER_CLASS  = 'moused_over';
+var CLICK       = 'click';
 var MOUSE_ENTER = 'mouseenter';
 var MOUSE_LEAVE = 'mouseleave';
-var CANVAS = 'canvas';
-
-var CANVAS_ID = 'tic_tac_toe_box_';
+var CANVAS      = 'canvas';
+var CANVAS_ID   = 'tic_tac_toe_box_';
 
 $(document).ready(function() {
     start_menu.init();
