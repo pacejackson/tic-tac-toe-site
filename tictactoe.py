@@ -239,7 +239,7 @@ def evaluate_line(board, player, index1, index2, index3):
     opponent = utils.get_opponent(player)
     line_counts = Counter([board[index1], board[index2], board[index3]])
     if line_counts[player] > 0 and line_counts[opponent] > 0:
-        return 0
+        return 0  # line has player and opponent values = dead line
     if line_counts[opponent] == 0:
-        return int(pow(10, line_counts[player] - 1))
-    return -int(pow(10, line_counts[opponent] - 1))
+        return int(pow(10, line_counts[player] - 1))  # line has only player values
+    return -int(pow(10, line_counts[opponent] - 1)) # line has only opponent values
